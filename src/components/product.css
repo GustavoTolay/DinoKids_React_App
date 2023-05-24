@@ -1,0 +1,27 @@
+.card{
+  height: auto;
+}
+
+.img-fluid{
+  width: 300px;
+}
+
+.img-div{
+  width: 300px;
+}
+
+.product-body{
+  background-color: rgb(193, 252, 244);
+}
+
+.li-item{
+  text-align: start;
+}
+
+.li-select{
+  text-indent: 0;
+}
+
+.perejil{
+  aspect-ratio: 1 / 1;
+}

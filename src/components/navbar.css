@@ -1,0 +1,28 @@
+.image{
+  width: 40px;
+}
+
+.nv{
+  background-color: rgb(37, 198, 209);
+}
+
+.dropdown-toggle{
+  display: none;
+}
+
+.dropdown-menu{
+  background-color: white;
+}
+
+.dropdown-item{
+  color: rgb(27, 27, 27);
+}
+
+@media (max-width: 575px) {
+  .nv{
+    min-height: 10vh;
+  }
+  .dropdown-toggle{
+    display: block;
+  }
+}

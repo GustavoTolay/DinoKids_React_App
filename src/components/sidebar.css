@@ -1,0 +1,11 @@
+.sidebar{
+  height: auto;
+  min-height: 89vh;
+  background-color: rgb(194, 194, 194);
+}
+
+@media (max-width: 575px) {
+  .sidebar{
+    display: none;
+  }
+}
