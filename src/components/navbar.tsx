@@ -22,7 +22,7 @@ function Navbar({ categories }: Props) {
             {categories.map((e, i) => {
               return (
                 <li key={i}>
-                  <Link className='dropdown-item fw-normal' to={`/category/${e.name}`}>
+                  <Link className='dropdown-item fw-normal' to={`/category/${e.name}`} reloadDocument>
                     {e.name}
                   </Link>
                 </li>
@@ -38,7 +38,7 @@ function Navbar({ categories }: Props) {
   return (
     <nav className='navbar navbar-expand-sm py-0 nv' data-bs-theme='dark'>
       <div className='container-fluid'>
-        <Link className='navbar-brand' to={"/"}>
+        <Link className='navbar-brand' to={"/"} reloadDocument>
           <img
             src='/osito.png'
             alt='Logo'

@@ -10,7 +10,7 @@ function Mininav({ category, product }: Props) {
     if (category == null && product == null) {
       return (
         <li className='breadcrumb-item'>
-          <Link to={"/"}>Home</Link>
+          <Link to={"/"} reloadDocument>Home</Link>
         </li>
       );
     }
@@ -18,7 +18,7 @@ function Mininav({ category, product }: Props) {
       return (
         <>
           <li className='breadcrumb-item'>
-            <Link to={"/"}>Home</Link>
+            <Link to={"/"} reloadDocument>Home</Link>
           </li>
           <li className='breadcrumb-item active'>{category}</li>
         </>
@@ -27,10 +27,10 @@ function Mininav({ category, product }: Props) {
     return (
       <>
         <li className='breadcrumb-item'>
-          <Link to={"/"}>Home</Link>
+          <Link to={"/"} reloadDocument>Home</Link>
         </li>
         <li className='breadcrumb-item'>
-          <Link to={`/category/${category}`}>{category}</Link>
+          <Link to={`/category/${category}`} reloadDocument>{category}</Link>
         </li>
         <li className='breadcrumb-item active' aria-current='page'>
           {product}

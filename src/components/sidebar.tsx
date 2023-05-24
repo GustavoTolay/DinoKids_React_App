@@ -56,6 +56,7 @@ function Sidebar({ categories }: Props) {
           key={key}
           to={`/category/${e.name}`}
           className='list-group-item list-group-item-action list-group-item-light'
+          reloadDocument
         >
           {e.name}
         </Link>
