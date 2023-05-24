@@ -7,7 +7,7 @@ type Props = {
 
 function Navbar({ categories }: Props) {
   const dropdownList = () => {
-    if (categories != null) {
+    if (categories) {
       return (
         <>
           <a

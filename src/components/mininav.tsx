@@ -7,18 +7,22 @@ interface Props {
 
 function Mininav({ category, product }: Props) {
   const tabsList = () => {
-    if (category == null && product == null) {
+    if (!category && !product) {
       return (
         <li className='breadcrumb-item'>
-          <Link to={"/"} reloadDocument>Home</Link>
+          <Link to={"/"} reloadDocument>
+            Home
+          </Link>
         </li>
       );
     }
-    if (product == null) {
+    if (!product) {
       return (
         <>
           <li className='breadcrumb-item'>
-            <Link to={"/"} reloadDocument>Home</Link>
+            <Link to={"/"} reloadDocument>
+              Home
+            </Link>
           </li>
           <li className='breadcrumb-item active'>{category}</li>
         </>
@@ -27,10 +31,14 @@ function Mininav({ category, product }: Props) {
     return (
       <>
         <li className='breadcrumb-item'>
-          <Link to={"/"} reloadDocument>Home</Link>
+          <Link to={"/"} reloadDocument>
+            Home
+          </Link>
         </li>
         <li className='breadcrumb-item'>
-          <Link to={`/category/${category}`} reloadDocument>{category}</Link>
+          <Link to={`/category/${category}`} reloadDocument>
+            {category}
+          </Link>
         </li>
         <li className='breadcrumb-item active' aria-current='page'>
           {product}

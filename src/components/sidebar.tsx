@@ -13,7 +13,7 @@ function Sidebar({ categories }: Props) {
 
   const adminActions = () => {
     const token = window.localStorage.getItem("UserSession");
-    if (token == null) {
+    if (!token) {
       return <></>;
     }
     return (

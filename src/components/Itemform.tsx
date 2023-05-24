@@ -8,13 +8,13 @@ type Props = {
 const Itemform = (props: Props) => {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [modelValues, setModelValues] = useState<inventary[]>(() => {
-    if (props.product == undefined) {
+    if (!props.product) {
       return [];
     }
     return props.product.inventary;
   });
   const [productValues, setProductValues] = useState<Product>(() => {
-    if (props.product == undefined) {
+    if (!props.product) {
       return {
         _id: "",
         available: true,
@@ -52,7 +52,7 @@ const Itemform = (props: Props) => {
   };
 
   const setImageInput = () => {
-    if (props.product == undefined) {
+    if (!props.product) {
       return (
         <div>
           <input
