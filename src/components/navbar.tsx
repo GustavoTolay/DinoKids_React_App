@@ -65,6 +65,7 @@ function Navbar({ categories }: Props) {
               className='nav-link active fw-bold'
               aria-current='page'
               to={"/"}
+              reloadDocument
             >
               Home
             </Link>
