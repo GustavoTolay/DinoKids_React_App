@@ -1,5 +1,5 @@
 import { category } from "../types";
-import "./sidebar.css";
+import "./css/sidebar.css";
 import { Link, useParams } from "react-router-dom";
 
 interface Props {

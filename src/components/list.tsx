@@ -1,6 +1,6 @@
 import { Product } from "../types";
 import { Link } from "react-router-dom";
-import "./list.css";
+import "./css/list.css";
 
 interface Props {
   products: Product[];

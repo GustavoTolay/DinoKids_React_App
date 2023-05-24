@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import types, { inventary } from "../types";
-import "./product.css";
+import "./css/product.css";
 import React, { useState } from "react";
 
 interface Props {
