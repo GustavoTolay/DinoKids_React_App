@@ -10,7 +10,7 @@ const Footer = () => {
     const url = window.location.pathname;
 
     const token = window.localStorage.getItem("UserSession");
-    if (token == null) {
+    if (!token) {
       return (
         <Link className='nav-link fw-bold active' to={"/Login"}>
           Iniciar Sesion
