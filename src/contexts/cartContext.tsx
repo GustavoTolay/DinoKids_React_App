@@ -22,7 +22,7 @@ type Context = {
   reduceCartList: React.Dispatch<Action>;
 };
 
-const CartContext = createContext<Context | null>(null);
+export const CartContext = createContext<Context>({} as Context);
 
 const CartProvider = ({ children }: Props) => {
   const cartReducer = (
