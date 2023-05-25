@@ -1,21 +1,28 @@
 import { useContext } from "react";
 import { CartContext } from "../contexts/cartContext";
 
-const { cartList, reduceCartList } = useContext(CartContext);
-
 const CartDetail = () => {
+  const { cartList, reduceCartList } = useContext(CartContext);
+
   const productList = () => {
-    const list = cartList.map((e) => {
+    const list = cartList.map((item, i) => {
       return (
-        <div className='row card'>
-          <img src={`https://dinokids.site/${e.image}`} className='col-3' />
+        <div className='row card' key={i}>
+          <img src={`https://dinokids.site/${item.image}`} className='col-3' />
           <div className='card-body col-9'>
-            <h6 className="card-title">{e.name}</h6>
-            <h6 className="card-text">{e.description}</h6>
-            <span className="badge">{e.model}</span>
-            <span className="badge">{e.size}</span>
-            <p>Precio: {e.price}</p>
-            <button className="btn btn-danger">Quitar</button>
+            <h6 className='card-title'>{item.name}</h6>
+            <h6 className='card-text'>{item.description}</h6>
+            <span className='badge'>{item.model}</span>
+            <span className='badge'>{item.size}</span>
+            <p>Precio: {item.price}</p>
+            <button
+              className='btn btn-danger'
+              onClick={() => {
+                reduceCartList({ type: "delete", product: item, number: 0 });
+              }}
+            >
+              Quitar
+            </button>
           </div>
         </div>
       );
