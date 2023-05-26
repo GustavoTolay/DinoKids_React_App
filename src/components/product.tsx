@@ -1,14 +1,92 @@
 import { Link } from "react-router-dom";
 import types, { inventary } from "../types";
 import "./css/product.css";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { CartContext } from "../contexts/cartContext";
 
 interface Props {
   product: types.Product;
   available: "yes" | "no";
 }
 
+type ButtonsProps = {
+  product: types.Product;
+  model: string;
+};
+
 var key2 = 0;
+
+function Buttons({ product, model }: ButtonsProps) {
+  const { reduceCartList } = useContext(CartContext);
+  const [quantity, setQuantity] = useState(0);
+  const [size, setSize] = useState("default");
+
+  const Input = () => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSize(e.currentTarget.value);
+    };
+
+    const index = product.inventary.findIndex((e) => e.model == model);
+
+    return (
+      <div className='col-auto p-0 mt-3 me-3'>
+        <select className='form-select' onChange={handleChange} value={size}>
+          <option value='default'>Talle</option>
+          {product.inventary[index].sizes.map((e, i) => {
+            if (e.stock)
+              return (
+                <option value={e.size} key={i}>
+                  {e.size}
+                </option>
+              );
+          })}
+        </select>
+      </div>
+    );
+  };
+
+  return (
+    <div className='row'>
+      <div className='col-auto'>
+        <div className='input-group m-2'>
+          <button
+            className='btn btn-light fs-3 border botones fw-semibold py-0 pb-1'
+            onClick={() => {
+              setQuantity(quantity + 1);
+            }}
+          >
+            +
+          </button>
+          <span className='input-group-text fs-5 border px-3'>{quantity}</span>
+          <button
+            className='btn btn-light fs-3 border px-3 botones fw-semibold py-0 pb-1'
+            onClick={() => {
+              if (quantity > 0) setQuantity(quantity - 1);
+            }}
+          >
+            -
+          </button>
+        </div>
+      </div>
+      <Input />
+      <div className='col-auto p-0 mt-3'>
+        <button
+          className='btn btn-primary'
+          onClick={() => {
+            if (quantity > 0)
+              reduceCartList({
+                type: "add",
+                number: quantity,
+                product: { ...product, model, size, quantity },
+              });
+          }}
+        >
+          Agregar al Carrito
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function Product({ product, available }: Props) {
   const [modelValue, setModelValue] = useState(product.inventary[0].model);
@@ -73,7 +151,11 @@ function Product({ product, available }: Props) {
 
   const list = () => {
     const options = product.inventary.map((e, i) => {
-      return <option value={e.model} key={i}>{e.model}</option>;
+      return (
+        <option value={e.model} key={i}>
+          {e.model}
+        </option>
+      );
     });
     return options;
   };
@@ -133,6 +215,7 @@ function Product({ product, available }: Props) {
                   {list()}
                 </select>
               </ul>
+              <Buttons product={product} model={modelValue} />
             </div>
           </div>
         </div>

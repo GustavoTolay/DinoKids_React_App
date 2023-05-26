@@ -29,11 +29,11 @@ const CartProvider = ({ children }: Props) => {
     state: CartProduct[],
     { type, number, product }: Action
   ): CartProduct[] => {
-    const index = cartList.findIndex(
+    const index = state.findIndex(
       ({ _id, size, model }) =>
         _id == product._id && size == product.size && model == product.model
     );
-    const newCart = structuredClone(cartList);
+    const newCart = structuredClone(state);
     if (type == "add") {
       if (index >= 0) {
         newCart[index].quantity += number;
