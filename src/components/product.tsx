@@ -29,13 +29,13 @@ function Buttons({ product, model }: ButtonsProps) {
     const index = product.inventary.findIndex((e) => e.model == model);
 
     return (
-      <div className='col-auto p-0 mt-3 me-3'>
-        <select className='form-select' onChange={handleChange} value={size}>
-          <option value='default'>Talle</option>
+      <div className='col-auto p-0 my-auto me-3'>
+        <select className='form-select fs-6' onChange={handleChange} value={size}>
+          <option value='default' className="fs-6">Talle</option>
           {product.inventary[index].sizes.map((e, i) => {
             if (e.stock)
               return (
-                <option value={e.size} key={i}>
+                <option className="fs-6" value={e.size} key={i}>
                   {e.size}
                 </option>
               );
@@ -69,11 +69,11 @@ function Buttons({ product, model }: ButtonsProps) {
         </div>
       </div>
       <Input />
-      <div className='col-auto p-0 mt-3'>
+      <div className='col-auto p-0 my-auto'>
         <button
           className='btn btn-primary'
           onClick={() => {
-            if (quantity > 0)
+            if (quantity > 0 && size != "default")
               reduceCartList({
                 type: "add",
                 number: quantity,
