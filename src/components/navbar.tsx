@@ -109,6 +109,7 @@ function Navbar({ categories }: Props) {
         </div>
         <div className='offcanvas-body'>
           <CartDetail />
+          <Link to={"/checkout"}><button className="btn btn-primary">Comprar</button></Link>
         </div>
       </div>
     </>

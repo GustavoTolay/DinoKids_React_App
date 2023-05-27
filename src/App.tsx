@@ -7,6 +7,7 @@ import Products from "./pages/Products";
 import Editor from "./pages/Editor";
 import Creator from "./pages/Creator";
 import AddCategory from "./pages/AddCategory";
+import Checkout from "./pages/Checkout";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path='/edititem/:id' element={<Editor />} />
         <Route path='/additem' element={<Creator />} />
         <Route path='/addcategory' element={<AddCategory />} />
+        <Route path="/checkout" element={<Checkout />}/>
       </Routes>
     </>
   );
