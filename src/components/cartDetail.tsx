@@ -8,6 +8,7 @@ type ButtonsProps = {
 
 const CartDetail = () => {
   const { cartList, reduceCartList } = useContext(CartContext);
+  window.localStorage.setItem("cartList", JSON.stringify(cartList))
 
   const Buttons = ({item}: ButtonsProps) => {
     return (

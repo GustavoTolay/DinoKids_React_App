@@ -52,7 +52,13 @@ const CartProvider = ({ children }: Props) => {
     return state;
   };
 
-  const [cartList, reduceCartList] = useReducer(cartReducer, []);
+  const initialState = (): CartProduct[] => {
+    const cart = window.localStorage.getItem("cartList");
+    if (cart) return JSON.parse(cart);
+    return [];
+  };
+
+  const [cartList, reduceCartList] = useReducer(cartReducer, initialState());
 
   return (
     <CartContext.Provider value={{ cartList, reduceCartList }}>
