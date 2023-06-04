@@ -45,7 +45,7 @@ function Sidebar({ categories }: Props) {
           <Link
             key={key}
             to={`/category/${e.name}`}
-            className='list-group-item list-group-item-action list-group-item-light disabled'
+            className='list-group-item list-group-item-action list-group-item-light disabled fw-normal'
           >
             {e.name}
           </Link>
@@ -55,7 +55,7 @@ function Sidebar({ categories }: Props) {
         <Link
           key={key}
           to={`/category/${e.name}`}
-          className='list-group-item list-group-item-action list-group-item-light'
+          className='list-group-item list-group-item-action list-group-item-light fw-normal'
           reloadDocument
         >
           {e.name}

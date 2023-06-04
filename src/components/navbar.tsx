@@ -2,11 +2,15 @@ import "./css/navbar.css";
 import { Link } from "react-router-dom";
 import { category } from "../types";
 import CartDetail from "./cartDetail";
+import { useContext } from "react";
+import { CartContext } from "../contexts/cartContext";
 type Props = {
   categories: category[] | null;
 };
 
 function Navbar({ categories }: Props) {
+  const { cartList } = useContext(CartContext);
+
   const dropdownList = () => {
     if (categories) {
       return (
@@ -79,13 +83,16 @@ function Navbar({ categories }: Props) {
             </div>
           </div>
           <button
-            className='btn btn-primary'
+            className='btn cart_button btn-info position-relative'
             type='button'
             data-bs-toggle='offcanvas'
             data-bs-target='#offcanvas'
             aria-controls='offcanvas'
           >
-            Carrito
+            <img className='cart_icon' src='/cart.png' />
+            <span className='px-1 position-absolute start-100 top-0 translate-middle badge rounded-pill bg-danger'>
+              {cartList.length.toString().padStart(2, "0")}
+            </span>
           </button>
         </div>
       </nav>
@@ -107,9 +114,11 @@ function Navbar({ categories }: Props) {
             aria-label='Close'
           ></button>
         </div>
-        <div className='offcanvas-body'>
+        <div className='offcanvas-body px-1'>
           <CartDetail />
-          <Link to={"/checkout"}><button className="btn btn-primary">Comprar</button></Link>
+          <Link to={"/checkout"}>
+            <button className='btn btn-primary'>Comprar</button>
+          </Link>
         </div>
       </div>
     </>

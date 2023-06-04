@@ -78,6 +78,7 @@ const Itemform = (props: Props) => {
           {
             size: "",
             stock: 0,
+            weight: 0
           },
         ],
       },
@@ -103,6 +104,7 @@ const Itemform = (props: Props) => {
     data[index].sizes.push({
       size: "",
       stock: 0,
+      weight: 0
     });
     setModelValues(data);
   };
@@ -150,6 +152,7 @@ const Itemform = (props: Props) => {
             value={e.stock}
             onChange={(evt) => handleSizeChange(evt, index, elementIndex)}
           ></input>
+          <input type="text" className="form-control mb-2" placeholder="weight" name="weight" value={e.weight} onChange={(evt) => handleSizeChange(evt, index, elementIndex)} />
           <button
             onClick={(evt) => removeSize(evt, elementIndex, index)}
             className='m-2 btn btn-danger'
@@ -212,10 +215,14 @@ const Itemform = (props: Props) => {
     const info = productValues;
     info.inventary = modelValues;
     const formData = new FormData()
-    formData.append("image", selectedFile as Blob)
+    if(!props.product) formData.append("image", selectedFile as Blob);
     formData.append("product", JSON.stringify(info))
+    const method = () => {
+      if(!props.product) return "POST"
+      return "PUT"
+    }
     const options: RequestInit = {
-      method: "POST",
+      method: method(),
       body: formData,
       headers: {
         Authorization: `Bearer ${token}`,

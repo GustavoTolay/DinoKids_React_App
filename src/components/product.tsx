@@ -20,13 +20,13 @@ function Buttons({ product, model }: ButtonsProps) {
   const { reduceCartList } = useContext(CartContext);
   const [quantity, setQuantity] = useState(0);
   const [size, setSize] = useState("default");
+  const index = product.inventary.findIndex((e) => e.model == model);
 
   const Input = () => {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSize(e.currentTarget.value);
     };
 
-    const index = product.inventary.findIndex((e) => e.model == model);
 
     return (
       <div className='col-auto p-0 my-auto me-3'>
@@ -45,10 +45,13 @@ function Buttons({ product, model }: ButtonsProps) {
     );
   };
 
+  const sizeIndex = product.inventary[index].sizes.findIndex(e => e.size == size)
+  const weight = product.inventary[index].sizes[sizeIndex].weight
+
   return (
     <div className='row'>
       <div className='col-auto'>
-        <div className='input-group m-2'>
+        <div className='input-group m-2 ms-0 m-sm-2'>
           <button
             className='btn btn-light fs-3 border botones fw-semibold py-0 pb-1'
             onClick={() => {
@@ -71,17 +74,17 @@ function Buttons({ product, model }: ButtonsProps) {
       <Input />
       <div className='col-auto p-0 my-auto'>
         <button
-          className='btn btn-primary'
+          className='btn btn-info'
           onClick={() => {
             if (quantity > 0 && size != "default")
               reduceCartList({
                 type: "add",
                 number: quantity,
-                product: { ...product, model, size, quantity },
+                product: { ...product, model, size, quantity, weight },
               });
           }}
         >
-          Agregar al Carrito
+          <img src="/addtocart.png" alt="" className="addtocart_icon"/>
         </button>
       </div>
     </div>
@@ -162,7 +165,7 @@ function Product({ product, available }: Props) {
 
   return (
     <div className='col-12 col-sm-9 col-lg-10'>
-      <div className='card product-body p-0 mt-2'>
+      <div className='card product-body p-0 mt-2 mb-3'>
         <div className='row g-0'>
           <div className='col-12 col-sm-4 img-div my-2 mx-auto m-sm-2'>
             <img
