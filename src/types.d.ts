@@ -17,7 +17,8 @@ type inventary = {
 
 type sizes = {
   size: string;
-  stock: number
+  stock: number;
+  weight: number
 }
 
 // type category = "category1" | "category2" | "category3" | "category4"

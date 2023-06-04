@@ -5,6 +5,7 @@ export type CartProduct = Omit<Product, "inventary"> & {
   model: string;
   size: string;
   quantity: number;
+  weight: number
 };
 
 type Props = {
