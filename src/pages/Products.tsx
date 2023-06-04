@@ -5,6 +5,8 @@ import Mininav from "../components/mininav";
 import types, { category } from "../types";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import FloatingButton from "../components/floatingButton";
+import Footer from "../components/footer";
 
 interface ProductState {
   inputValues: types.Product;
@@ -87,6 +89,8 @@ function Products() {
           category={productValues.category}
         />
         <div className='row m-0'>{loadPage()}</div>
+        <div className="row m-0"><Footer /></div>
+        <FloatingButton />
       </div>
     </>
   );

@@ -6,6 +6,7 @@ import Footer from "../components/footer";
 import { useEffect, useState } from "react";
 import { Product, category } from "../types";
 import { useParams } from "react-router-dom";
+import FloatingButton from "../components/floatingButton";
 
 const products: Product[] = [
   {
@@ -97,6 +98,7 @@ function Home() {
         <Navbar categories={categories}/>
         <Mininav product={null} category={cat}></Mininav>
         {loadPage()}
+        <FloatingButton />
       </div>
     </>
   );
