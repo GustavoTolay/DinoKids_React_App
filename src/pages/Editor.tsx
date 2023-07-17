@@ -2,17 +2,17 @@ import Navbar from "../components/navbar";
 import Itemform from "../components/Itemform";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import types from "../types";
+import { Product } from "../types";
 
 const Editor = () => {
   const { id } = useParams();
 
-  const [productValues, setProductValues] = useState<types.Product>();
+  const [productValues, setProductValues] = useState<Product>();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch(`https://dinokids.site/products/${id}`)
-      .then((res) => res.json() as Promise<types.Product>)
+      .then((res) => res.json() as Promise<Product>)
       .then((product) => {
         console.log(product);
         setProductValues(product);

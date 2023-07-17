@@ -2,89 +2,55 @@ import Navbar from "../components/navbar";
 import Sidebar from "../components/sidebar";
 import List from "../components/list";
 import Mininav from "../components/mininav";
-import Footer from "../components/footer";
-import { useEffect, useState } from "react";
-import { Product, category } from "../types";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Product, Category } from "../types";
 import FloatingButton from "../components/floatingButton";
-
-const products: Product[] = [
-  {
-    _id: "hola",
-    name: "hola",
-    image: "remera.jpg",
-    price: 12,
-    available: false,
-    category: "",
-    inventary: [],
-    brand: "",
-    description: "",
-  },
-];
-
-//Inventary example XD:
-
-//inventary: [{
-//  models: "",
-//  sizes: [{
-//    size: "",
-//    stock: 0
-//  }]
-
-// const categories: category[] = [
-//   "category1",
-//   "category2",
-//   "category3",
-//   "category4",
-// ];
-
-var cat: string | null = null;
+import { ContentContext } from "../contexts/contentContext";
 
 function Home() {
-  const { category } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [categories, setCategories] = useState<category[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [productsList, setProductsList] = useState<Product[]>([]);
+
+  const { filters } = useContext(ContentContext);
+
+  const filterProducts = (products: Product[]) => {
+    return products.filter((product) => {
+      return filters.category == "all" || product.category == filters.category;
+    });
+  };
 
   useEffect(() => {
     fetch("https://dinokids.site/categories")
-      .then((res) => res.json() as Promise<category[]>)
+      .then((res) => res.json() as Promise<Category[]>)
       .then((list) => {
         console.log(list);
         setCategories(list);
-        setIsLoading(false);
+        setLoadingCategories(false);
       });
   }, []);
 
+  const filteredProducts = filterProducts(productsList);
+
   useEffect(() => {
-    if (category == undefined) {
-      fetch("https://dinokids.site/products")
-        .then((res) => res.json() as Promise<Product[]>)
-        .then((products) => {
-          console.log(products);
-          setProducts(products);
-        });
-    } else {
-      fetch(`https://dinokids.site/products/category/${category}`)
-        .then((res) => res.json() as Promise<Product[]>)
-        .then((products) => {
-          console.log(products);
-          setProducts(products);
-          cat = category;
-        });
-    }
+    fetch("https://dinokids.site/products")
+      .then((res) => res.json() as Promise<Product[]>)
+      .then((products) => {
+        console.log(products);
+        setProductsList(products);
+        setLoadingProducts(false);
+      });
   }, []);
 
-  const [productsList, setProducts] = useState<Product[]>(products);
   const loadPage = () => {
-    if (!isLoading) {
+    if (!loadingCategories && !loadingProducts) {
       return (
         <>
-          <div className='row m-0'>
+          <div className='row m-0 flex-grow-1'>
             <Sidebar categories={categories} />
-            <List products={productsList} />
-          </div>
-          <div className='row m-0'>
-            <Footer />
+            <List products={filteredProducts} />
           </div>
         </>
       );
@@ -93,14 +59,12 @@ function Home() {
   };
 
   return (
-    <>
-      <div className='App container-fluid p-0 m-0'>
-        <Navbar categories={categories}/>
-        <Mininav product={null} category={cat}></Mininav>
-        {loadPage()}
-        <FloatingButton />
-      </div>
-    </>
+    <div className='App container-fluid p-0 m-0 min-vh-100 d-flex flex-column'>
+      <Navbar categories={categories} />
+      <Mininav></Mininav>
+      {loadPage()}
+      <FloatingButton />
+    </div>
   );
 }
 

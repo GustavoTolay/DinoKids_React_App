@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Navbar from "../components/navbar";
-import { category } from "../types";
+import { Category } from "../types";
 
 const Creator = () => {
-  const [formValues, setFormValues] = useState<category>({
+  const [formValues, setFormValues] = useState<Category>({
     available: true,
     name: "",
   });
