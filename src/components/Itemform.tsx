@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Product, inventary } from "../types";
+import { Product, Inventary } from "../types";
 import React from "react";
 type Props = {
   product: Product | undefined;
@@ -7,7 +7,7 @@ type Props = {
 
 const Itemform = (props: Props) => {
   const [selectedFile, setSelectedFile] = useState<File>();
-  const [modelValues, setModelValues] = useState<inventary[]>(() => {
+  const [modelValues, setModelValues] = useState<Inventary[]>(() => {
     if (!props.product) {
       return [];
     }
@@ -132,7 +132,7 @@ const Itemform = (props: Props) => {
     setModelValues(data);
   };
 
-  const sizeList = (element: inventary, elementIndex: number) => {
+  const sizeList = (element: Inventary, elementIndex: number) => {
     const list = element.sizes.map((e, index) => {
       return (
         <React.Fragment key={index}>

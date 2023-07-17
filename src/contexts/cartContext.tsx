@@ -4,6 +4,7 @@ import { Product } from "../types";
 export type CartProduct = Omit<Product, "inventary"> & {
   model: string;
   size: string;
+  stock: number;
   quantity: number;
   weight: number
 };
@@ -21,6 +22,8 @@ type Action = {
 type Context = {
   cartList: CartProduct[];
   reduceCartList: React.Dispatch<Action>;
+  cartPrice: number;
+  cartWeight: number
 };
 
 export const CartContext = createContext<Context>({} as Context);
@@ -60,9 +63,11 @@ const CartProvider = ({ children }: Props) => {
   };
 
   const [cartList, reduceCartList] = useReducer(cartReducer, initialState());
+  const cartPrice = cartList.reduce((a, b) => a + b.price * b.quantity, 0);
+  const cartWeight = cartList.reduce((a, b) => a + b.weight * b.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cartList, reduceCartList }}>
+    <CartContext.Provider value={{ cartList, reduceCartList, cartPrice, cartWeight }}>
       {children}
     </CartContext.Provider>
   );

@@ -1,15 +1,18 @@
-import { category } from "../types";
-import "./css/sidebar.css";
+import { useContext } from "react";
+import { Category } from "../types";
+// import "./css/sidebar.css";
 import { Link, useParams } from "react-router-dom";
+import { ContentContext } from "../contexts/contentContext";
 
 interface Props {
-  categories: category[];
+  categories: Category[];
 }
 
 var key = 0;
 
 function Sidebar({ categories }: Props) {
-  const { category } = useParams();
+  const { product } = useParams()
+  const { setFilters, filters } = useContext(ContentContext);
 
   const adminActions = () => {
     const token = window.localStorage.getItem("UserSession");
@@ -27,7 +30,7 @@ function Sidebar({ categories }: Props) {
             Añadir producto
           </Link>
           <Link
-            to={"/AddCategory"}
+            to={"/Add"}
             className='list-group-item list-group-item-action list-group-item-light'
           >
             Añadir categoria
@@ -40,25 +43,26 @@ function Sidebar({ categories }: Props) {
   const categoriesList = () => {
     const list = categories.map((e, index) => {
       key = key + 1;
-      if (e.name == category) {
+      if (e.name == filters.category && !product) {
         return (
-          <Link
+          <button
             key={key}
-            to={`/category/${e.name}`}
-            className='list-group-item list-group-item-action list-group-item-light disabled fw-normal'
+            className='btn btn-outline-secondary_blue border-2 text-white fw-normal mb-1'
           >
             {e.name}
-          </Link>
+          </button>
         );
       }
       return (
-        <Link
-          key={key}
-          to={`/category/${e.name}`}
-          className='list-group-item list-group-item-action list-group-item-light fw-normal'
-          reloadDocument
-        >
-          {e.name}
+        <Link to={`/category/${e.name}`} key={key}>
+          <button
+            className='btn btn-secondary_blue border-2 text-white fw-normal mb-1 w-100'
+            onClick={() => {
+              setFilters({ category: e.name });
+            }}
+          >
+            {e.name}
+          </button>
         </Link>
       );
     });
@@ -66,9 +70,9 @@ function Sidebar({ categories }: Props) {
   };
 
   return (
-    <div className='col-3 col-lg-2 px-2 sidebar'>
-      <h5 className='py-2'>Categorias</h5>
-      <div className='list-group '>{categoriesList()}</div>
+    <div className='col-3 col-lg-2 px-3 bg-main_blue d-none d-sm-block'>
+      <h5 className='py-3 m-0 text-white'>Categorias</h5>
+      <div className='list-group'>{categoriesList()}</div>
       {adminActions()}
     </div>
   );

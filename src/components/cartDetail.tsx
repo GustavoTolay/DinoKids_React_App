@@ -3,14 +3,14 @@ import { CartContext, CartProduct } from "../contexts/cartContext";
 import "./css/cartDetail.css";
 
 type Props = {
-  isCheckout?: true;
+  hideButtons?: boolean;
 };
 
 type ButtonsProps = {
   item: CartProduct;
 };
 
-const CartDetail = ({ isCheckout }: Props) => {
+const CartDetail = ({ hideButtons }: Props) => {
   const { cartList, reduceCartList } = useContext(CartContext);
   window.localStorage.setItem("cartList", JSON.stringify(cartList));
 
@@ -21,11 +21,13 @@ const CartDetail = ({ isCheckout }: Props) => {
           <button
             className='btn border fs-5 fw-bold botones py-0 pb-1'
             onClick={() => {
-              reduceCartList({
+              if(item.quantity < item.stock) {
+                reduceCartList({
                 number: item.quantity + 1,
                 product: item,
                 type: "change",
               });
+              }
             }}
           >
             +
@@ -52,7 +54,7 @@ const CartDetail = ({ isCheckout }: Props) => {
   };
 
   const setButtons = (item: CartProduct) => {
-    if (!isCheckout)
+    if (!hideButtons)
       return (
         <>
           <Buttons item={item} />

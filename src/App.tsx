@@ -3,11 +3,11 @@ import { Route, Routes } from "react-router-dom";
 import LogIn from "./pages/Login";
 import SignIn from "./pages/Singin";
 import Home from "./pages/Home";
-import Products from "./pages/Products";
 import Editor from "./pages/Editor";
 import Creator from "./pages/Creator";
 import AddCategory from "./pages/AddCategory";
 import Checkout from "./pages/Checkout";
+import Products from "./pages/Products";
 
 function App() {
   return (
