@@ -1,41 +1,53 @@
 import { Link } from "react-router-dom";
-import types, { inventary } from "../types";
-import "./css/product.css";
-import React, { useContext, useState } from "react";
+import { Inventary, Product } from "../types";
+// import "./css/product.css";
+import React, {
+  useContext,
+  useState,
+  Dispatch,
+  SetStateAction
+} from "react";
 import { CartContext } from "../contexts/cartContext";
 
 interface Props {
-  product: types.Product;
-  available: "yes" | "no";
+  product: Product;
+  available: boolean;
 }
 
 type ButtonsProps = {
-  product: types.Product;
+  product: Product;
   model: string;
+  setQuantity: Dispatch<SetStateAction<number>>;
+  quantity: number;
 };
 
 var key2 = 0;
 
-function Buttons({ product, model }: ButtonsProps) {
-  const { reduceCartList } = useContext(CartContext);
-  const [quantity, setQuantity] = useState(0);
+function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
+  const { reduceCartList, cartList } = useContext(CartContext);
   const [size, setSize] = useState("default");
   const index = product.inventary.findIndex((e) => e.model == model);
 
   const Input = () => {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSize(e.currentTarget.value);
+      setQuantity(0);
     };
-
 
     return (
       <div className='col-auto p-0 my-auto me-3'>
-        <select className='form-select fs-6' onChange={handleChange} value={size}>
-          <option value='default' className="fs-6">Talle</option>
+        <select
+          className='form-select fs-6'
+          onChange={handleChange}
+          value={size}
+        >
+          <option value='default' className='fs-6'>
+            Talle
+          </option>
           {product.inventary[index].sizes.map((e, i) => {
             if (e.stock)
               return (
-                <option className="fs-6" value={e.size} key={i}>
+                <option className='fs-6' value={e.size} key={i}>
                   {e.size}
                 </option>
               );
@@ -45,8 +57,15 @@ function Buttons({ product, model }: ButtonsProps) {
     );
   };
 
-  const sizeIndex = product.inventary[index].sizes.findIndex(e => e.size == size)
-  const weight = product.inventary[index].sizes[sizeIndex].weight
+  const sizeIndex = product.inventary[index].sizes.findIndex(
+    (e) => e.size == size
+  );
+  const weight = product.inventary[index].sizes[sizeIndex]?.weight || 0;
+  const currentStock = product.inventary[index].sizes[sizeIndex]?.stock || 0;
+  const inCart =
+    cartList.find(
+      (e) => e.name == product.name && e.model == model && e.size == size
+    )?.quantity || 0;
 
   return (
     <div className='row'>
@@ -55,7 +74,7 @@ function Buttons({ product, model }: ButtonsProps) {
           <button
             className='btn btn-light fs-3 border botones fw-semibold py-0 pb-1'
             onClick={() => {
-              setQuantity(quantity + 1);
+              if (quantity + inCart < currentStock) setQuantity(quantity + 1);
             }}
           >
             +
@@ -74,30 +93,40 @@ function Buttons({ product, model }: ButtonsProps) {
       <Input />
       <div className='col-auto p-0 my-auto'>
         <button
-          className='btn btn-info'
+          className='btn btn-secondary_blue'
           onClick={() => {
-            if (quantity > 0 && size != "default")
+            if (quantity > 0 && size != "default") {
               reduceCartList({
                 type: "add",
                 number: quantity,
-                product: { ...product, model, size, quantity, weight },
+                product: {
+                  ...product,
+                  model,
+                  size,
+                  quantity,
+                  weight,
+                  stock: currentStock,
+                },
               });
+              setQuantity(0);
+            }
           }}
         >
-          <img src="/addtocart.png" alt="" className="addtocart_icon"/>
+          <img src='/addtocart.png' height='30px' className='addtocart_icon' />
         </button>
       </div>
     </div>
   );
 }
 
-function Product({ product, available }: Props) {
+function Details({ product, available }: Props) {
   const [modelValue, setModelValue] = useState(product.inventary[0].model);
+  const [quantity, setQuantity] = useState(0);
 
   const sizesList = () => {
     const model = product.inventary.find(
       (e) => e.model == modelValue
-    ) as inventary;
+    ) as Inventary;
     const sizeList = model.sizes.filter((e) => e.stock > 0);
     const list = sizeList.map((e) => {
       key2 = key2 + 1;
@@ -149,6 +178,7 @@ function Product({ product, available }: Props) {
     }
     setSelected(e.currentTarget.value);
     setModelValue(e.currentTarget.value);
+    setQuantity(0);
     console.log(e.currentTarget.value);
   };
 
@@ -165,60 +195,56 @@ function Product({ product, available }: Props) {
 
   return (
     <div className='col-12 col-sm-9 col-lg-10'>
-      <div className='card product-body p-0 mt-2 mb-3'>
+      <div className='card p-0 mt-2 mb-3 bg-background_blue border-border_blue border-2'>
         <div className='row g-0'>
-          <div className='col-12 col-sm-4 img-div my-2 mx-auto m-sm-2'>
+          <div className='col-12 col-sm-4 p-3'>
             <img
               src={`https://dinokids.site/${product.image}`}
-              className='img-fluid rounded-start rounded-end p-0 perejil'
+              className='img-fluid rounded-start rounded-end'
             />
           </div>
           <div className='col-12 col-sm-8'>
-            <div className='card-body'>
-              <h5 className='card-title li-item'>{product.name}</h5>
-
-              <ul className='list-group'>
-                <li className='list-group-item py-1 li-item'>
-                  <h5 className='m-0'>
+            <div className='card-body text-start'>
+              <h5 className='card-title fw-semibold'>{product.name}</h5>
+              <div className='card p-3'>
+                <div className='card-body p-0'>
+                  <h5>
                     {product.description}{" "}
-                    <span className='badge bg-danger fw-semibold'>
+                    <span className='badge bg-danger'>
                       {modelValue}
                     </span>
                   </h5>
-                </li>
-                <li className='list-group-item py-1 li-item'>
-                  <h5 className='m-0 fw-normal'>
-                    Talles en stock: {sizesList()}
-                  </h5>
-                </li>
-                <li className='list-group-item py-1 li-item'>
-                  <h5 className='m-0 fw-normal'>
+                  <h5>Talles en stock: {sizesList()}</h5>
+                  <h5>
                     Marca:{" "}
-                    <span className='badge bg-success fw-semibold fs-6'>
+                    <span className='badge bg-success'>
                       {product.brand}
                     </span>
                   </h5>
-                </li>
-                <li className='list-group-item py-1 li-item'>
-                  <h5 className='m-0 fw-normal'>
+                  <h5>
                     Precio:{" "}
-                    <span className='badge bg-success fw-semibold fs-6'>
+                    <span className='badge bg-success'>
                       {product.price}
                     </span>
                   </h5>
-                </li>
-                <select
-                  className='list-group-item fs-5 py-1 li-select'
-                  value={selected}
-                  onChange={handleSelect}
-                >
-                  <option className='fs-6' value={"default"}>
-                    Seleccione el modelo
-                  </option>
-                  {list()}
-                </select>
-              </ul>
-              <Buttons product={product} model={modelValue} />
+                  <select
+                    className='form-select fs-5 py-1'
+                    value={selected}
+                    onChange={handleSelect}
+                  >
+                    <option className='fs-6' value={"default"}>
+                      Seleccione el modelo
+                    </option>
+                    {list()}
+                  </select>
+                </div>
+              </div>
+              <Buttons
+                product={product}
+                model={modelValue}
+                setQuantity={setQuantity}
+                quantity={quantity}
+              />
             </div>
           </div>
         </div>
@@ -228,4 +254,4 @@ function Product({ product, available }: Props) {
   );
 }
 
-export default Product;
+export default Details;
