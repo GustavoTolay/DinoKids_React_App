@@ -1,6 +1,6 @@
 type Zone = "zone1" | "zone2" | "zone3" | "zone4";
 export type Weight = 0.5 | 1 | 2 | 3 | 5;
-type Destination = "Domicilio" | "Sucursal";
+type Destination = "shipping";
 
 export type State =
   | "Buenos Aires"
@@ -28,7 +28,7 @@ export type State =
   | "Tucumán"
   | "San Salvador de Jujuy";
 
-export const zoneList: { [state in State]: Zone } = {
+const zoneList: { [state in State]: Zone } = {
   "San Salvador de Jujuy": "zone1",
   "Buenos Aires": "zone4",
   Catamarca: "zone2",
@@ -55,37 +55,51 @@ export const zoneList: { [state in State]: Zone } = {
   Tucumán: "zone2",
 };
 
+export const stateList = Object.keys(zoneList);
+
 const priceList: {
   [zone in Zone]: {
     [destination in Destination]: { [weight in Weight]: number };
   };
 } = {
   zone1: {
-    Domicilio: { "0.5": 1071, "1": 1154, "2": 1267, "3": 1274, "5": 1288 },
-    Sucursal: { "0.5": 651, "1": 662, "2": 719, "3": 729, "5": 754 },
+    shipping: { "0.5": 1071, "1": 1154, "2": 1267, "3": 1274, "5": 1288 },
+    // Sucursal: { "0.5": 651, "1": 662, "2": 719, "3": 729, "5": 754 },
   },
   zone2: {
-    Domicilio: { "0.5": 1186, "1": 1384, "2": 1425, "3": 1505, "5": 1784 },
-    Sucursal: { "0.5": 770, "1": 834, "2": 980, "3": 1084, "5": 1355 },
+    shipping: { "0.5": 1186, "1": 1384, "2": 1425, "3": 1505, "5": 1784 },
+    // Sucursal: { "0.5": 770, "1": 834, "2": 980, "3": 1084, "5": 1355 },
   },
   zone3: {
-    Domicilio: { "0.5": 1290, "1": 1508, "2": 1557, "3": 1697, "5": 1999 },
-    Sucursal: { "0.5": 843, "1": 917, "2": 1068, "3": 1230, "5": 1496 },
+    shipping: { "0.5": 1290, "1": 1508, "2": 1557, "3": 1697, "5": 1999 },
+    // Sucursal: { "0.5": 843, "1": 917, "2": 1068, "3": 1230, "5": 1496 },
   },
   zone4: {
-    Domicilio: { "0.5": 1296, "1": 1519, "2": 1646, "3": 1811, "5": 2206 },
-    Sucursal: { "0.5": 862, "1": 958, "2": 1152, "3": 1347, "5": 1530 },
+    shipping: { "0.5": 1296, "1": 1519, "2": 1646, "3": 1811, "5": 2206 },
+    // Sucursal: { "0.5": 862, "1": 958, "2": 1152, "3": 1347, "5": 1530 },
   },
 };
 
+const roundWeight = (weight: number) => {
+  const weightList: Weight[] = [5, 3, 2, 1, 0.5];
+  let rounded: Weight = 0.5;
+  weightList.forEach(e => {
+    if(e >= weight) rounded = e;
+  });
+  return rounded
+}
+
 export const shipCalculator = (
+  weight: number,
   state?: State | "default",
-  weight?: Weight,
-  type?: "Domicilio" | "Sucursal" | "Retiro"
+  type?: "shipping" | "withdraw"
 ) => {
-  if (type == "Retiro") return "0";
+  const discount = 0.9;
+  const roundedWeight = roundWeight(weight);
+  if (type == "withdraw") return 0;
+  console.log({ weight, state, type })
   if (state && weight && type && state != "default") {
-    return priceList[zoneList[state]][type][weight];
+    return Math.round(priceList[zoneList[state]][type][roundedWeight] * discount);
   }
-  return "-";
+  return 0;
 };
