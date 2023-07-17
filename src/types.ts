@@ -7,15 +7,15 @@ export interface Product {
   brand: string;
   available: boolean;
   category: string;
-  inventary: inventary[]
+  inventary: Inventary[]
 }
 
-type inventary = {
+export type Inventary = {
   model: string;
-  sizes: sizes[];
+  sizes: Sizes[];
 }
 
-type sizes = {
+type Sizes = {
   size: string;
   stock: number;
   weight: number
@@ -29,7 +29,26 @@ export interface User {
   role: string
 }
 
-export type category = {
+export type Category = {
   name: string,
   available: boolean
 }
+
+// selling info ?
+
+export type Shipment = {
+  ship_mode: "shipping" | "withdraw";
+  fullname: string;
+  state?: string;
+  locality?: string;
+  street?: string;
+  number?: number;
+  email?: string;
+  phone?: number;
+  apartment?: number;
+  floor?: number;
+  postal_code?: number;
+  observations?: string;
+};
+
+  
