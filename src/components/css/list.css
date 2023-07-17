@@ -1,33 +1,7 @@
-.card{
-  box-sizing: border-box;
-  height: 35vh;
-}
-
-.row{
-  justify-self: center;
-}
-
-.card-img-top{
-  height: 75%;
-}
-
 .product:hover{
   -webkit-transform: scale(1.05);
       -ms-transform: scale(1.05);
           transform: scale(1.05);
-          transition: 0.5s;
+          transition: 0.3s;
           z-index: 10;
-}
-
-.card-body{
-  
-  height: 25%;
-}
-
-.lista{
-  min-height: 89vh;
-}
-
-.banana{
-  aspect-ratio: 1 / 1;
 }
