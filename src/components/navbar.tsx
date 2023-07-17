@@ -1,36 +1,39 @@
 import "./css/navbar.css";
 import { Link } from "react-router-dom";
-import { category } from "../types";
+import { Category } from "../types";
 import CartDetail from "./cartDetail";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CartContext } from "../contexts/cartContext";
+
 type Props = {
-  categories: category[] | null;
+  categories: Category[] | null;
+  hideCart?: boolean
 };
 
-function Navbar({ categories }: Props) {
+function Navbar({ categories, hideCart }: Props) {
   const { cartList } = useContext(CartContext);
+
+  const [cartButton, setCartButton] = useState(true);
 
   const dropdownList = () => {
     if (categories) {
       return (
         <>
           <a
-            className='nav-link dropdown-toggle fw-bold active'
+            className='nav-link dropdown-toggle fw-bold active d-sm-none d-block'
             role='button'
             data-bs-toggle='dropdown'
             aria-expanded='false'
           >
             Categorias
           </a>
-          <ul className='dropdown-menu mb-2'>
+          <ul className='dropdown-menu mb-2 bg-white text-black'>
             {categories.map((e, i) => {
               return (
                 <li key={i}>
                   <Link
-                    className='dropdown-item fw-normal'
+                    className='dropdown-item text-black text-center'
                     to={`/category/${e.name}`}
-                    reloadDocument
                   >
                     {e.name}
                   </Link>
@@ -46,17 +49,20 @@ function Navbar({ categories }: Props) {
 
   return (
     <>
-      <nav className='navbar navbar-expand-sm py-0 nv' data-bs-theme='dark'>
+      <nav
+        className='navbar navbar-expand-sm py-0 bg-main_blue'
+        data-bs-theme='dark'
+      >
         <div className='container-fluid'>
-          <Link className='navbar-brand' to={"/"} reloadDocument>
+          <Link className='navbar-brand pt-1' to={"/"}>
             <img
-              src='/osito.png'
+              src='/dino2.png'
               alt='Logo'
-              width='40'
+              width='45'
               height='45'
-              className='d-inline-block'
+              className='d-inline-block align-text-bottom'
             />
-            {"  "}DinoKids
+            <span className='main_logo'>{"  "}DinoKids</span>
           </Link>
           <button
             className='navbar-toggler'
@@ -66,6 +72,11 @@ function Navbar({ categories }: Props) {
             aria-controls='navbarNavAltMarkup'
             aria-expanded='false'
             aria-label='Toggle navigation'
+            onClick={() => {
+              const mimic = cartButton;
+              if (mimic) setCartButton(!mimic);
+              else setTimeout(() => setCartButton(!mimic), 350);
+            }}
           >
             <span className='navbar-toggler-icon'></span>
           </button>
@@ -75,29 +86,38 @@ function Navbar({ categories }: Props) {
                 className='nav-link active fw-bold'
                 aria-current='page'
                 to={"/"}
-                reloadDocument
               >
                 Home
               </Link>
               {dropdownList()}
+              <a
+                className='fw-bold nav-link active'
+                data-bs-toggle='offcanvas'
+                data-bs-target='#offcanvas'
+                aria-controls='offcanvas'
+                hidden={hideCart}
+              >
+                Carrito
+              </a>
             </div>
           </div>
           <button
-            className='btn cart_button btn-info position-relative'
+            className='btn btn-secondary_blue position-relative'
             type='button'
             data-bs-toggle='offcanvas'
             data-bs-target='#offcanvas'
             aria-controls='offcanvas'
+            hidden={!cartButton || hideCart}
           >
-            <img className='cart_icon' src='/cart.png' />
-            <span className='px-1 position-absolute start-100 top-0 translate-middle badge rounded-pill bg-danger'>
+            <img src='/cart.png' height='30' width='30' />
+            <span className='px-1 position-absolute start-100 mt-1 top-0 translate-middle badge rounded-pill bg-danger'>
               {cartList.length.toString().padStart(2, "0")}
             </span>
           </button>
         </div>
       </nav>
       <div
-        className='offcanvas offcanvas-start'
+        className='offcanvas offcanvas-start bg-pink text-white'
         data-bs-scroll='true'
         tabIndex={-1}
         id='offcanvas'
@@ -117,7 +137,11 @@ function Navbar({ categories }: Props) {
         <div className='offcanvas-body px-1'>
           <CartDetail />
           <Link to={"/checkout"}>
-            <button className='btn btn-primary'>Comprar</button>
+            {cartList.length > 0 ? (
+              <button className='btn btn-primary'>Comprar</button>
+            ) : (
+              <></>
+            )}
           </Link>
         </div>
       </div>
