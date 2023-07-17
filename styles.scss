@@ -1,0 +1,29 @@
+$font-family-base: 'Josefin Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-weight-light: 300;
+
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/variables-dark";
+
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metal+Mania&display=swap");
+
+// $h5-font-size: $font-size-base * 1.42;
+$display-line-height: 1;
+$custom-colors: (
+  "main_blue": #00B0FC,
+  "secondary_blue": #38C3FF,
+  "light_blue": #5BD9C4,
+  "pink": #FF6F6F,
+  "light_pink": #FFA9A9,
+  "background_blue": #C2FBFF,
+  "border_blue": #7EF7FF,
+  "gray": rgb(131, 131, 131)
+);
+$theme-colors: map-merge($theme-colors, $custom-colors);
+$breadcrumb-divider-color: white;
+
+@import "node_modules/bootstrap/scss/maps";
+@import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/root";
+
+@import "node_modules/bootstrap/scss/bootstrap.scss";
