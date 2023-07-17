@@ -4,14 +4,15 @@ import Navbar from "../components/navbar";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import { CartContext } from "../contexts/cartContext";
 import {
-  State,
-  Weight,
   shipCalculator,
-  zoneList,
-} from "../hooks/shipCalculator";
+} from "../utils/shipCalculator";
 import FloatingButton from "../components/floatingButton";
-import Footer from "../components/footer";
-initMercadoPago("TEST-fb10a3c3-148e-48ae-b4a5-e64ffbe0cccf");
+
+import configMP from "../utils/configMP"
+initMercadoPago(configMP.publicKey);
+import { Product, Shipment } from "../types";
+import ShippingForm from "../components/shippingForm";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 type Item = {
   title: string;
@@ -19,41 +20,78 @@ type Item = {
   quantity: number;
 };
 
+type PreferenceRequest = {
+  items: Item[];
+  shipments?: {
+    cost: number,
+    mode: "not_specified"
+  }
+}
+
 function Checkout() {
-  const { cartList } = useContext(CartContext);
-  const states = Object.keys(zoneList);
-  let weight = 0;
-  let roundedWeight: Weight = 0.5;
-  cartList.map((e) => (weight += e.weight * e.quantity));
-  const weightList: Weight[] = [5, 3, 2, 1, 0.5];
-  weightList.map((e) => {
-    if (e > weight) roundedWeight = e;
-  });
-  const [selected, setSelected] = useState<State | "default">("default");
-  const [shipment, setShipment] = useState<string | null>(null);
-  const shipPrice = shipCalculator(
-    selected as State,
-    roundedWeight,
-    shipment as "Retiro"
-  );
-  const orderData: Item[] & { shipments?: {} } = cartList.map((e) => {
+  const { cartList, cartPrice, cartWeight } = useContext(CartContext);
+  
+  const itemsList: Item[] = cartList.map((e) => {
     return { title: e.description, quantity: e.quantity, unit_price: e.price };
   });
-  let cost = shipPrice;
-  if (typeof shipPrice != "number") cost = 0;
-  orderData.shipments = {
-    cost,
-    mode: "not_specified",
-  };
+  
   const [preferenceId, setPreferenceId] = useState<string>();
   const [isLoading, setIsloading] = useState<boolean>(true);
-  const [isBlocked, setIsBlocked] = useState(false);
-  let totalPrice: number = 0;
-  cartList.map((e) => {
-    totalPrice += e.price * e.quantity;
+  const [sufficientStock, setSufficientStock] = useState<boolean>();
+
+  const [confirmed, setConfirmed] = useState(false);
+
+  const verifyStock = () => {
+    const idList = cartList.map(({ _id }) => {
+      return { _id };
+    });
+    fetch("https://dinokids.site/products/stock", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(idList),
+    })
+      .then((res) => {
+        if (res.status == 404) return null;
+        return res.json();
+      })
+      .then((stockList: Product[] | null) => {
+        if (!stockList) return;
+        const stock = cartList.map((product) => {
+          const current = stockList.find((e) => e._id == product._id);
+          const model = current?.inventary.find(
+            (e) => e.model == product.model
+          );
+          const size = model?.sizes.find((e) => e.size == product.size);
+          return (size?.stock as number) >= product.quantity;
+        });
+        setSufficientStock(!stock.includes(false));
+      })
+      .catch((error) => {
+        console.error(error.json());
+      });
+  };
+
+  const formMethods = useForm<Shipment>({
+    defaultValues: { ship_mode: "withdraw" },
   });
 
+  const state = formMethods.watch("state");
+  const shipMode = formMethods.watch("ship_mode");
+  console.log({ state, shipMode });
+  const shipPrice = shipCalculator(0.5, state as "default", shipMode);
+
+  const orderData: PreferenceRequest = {
+    items: itemsList,
+    shipments: {
+      cost: shipPrice,
+      mode: "not_specified",
+    }
+  };
+
   const createPreference = () => {
+    console.log(orderData);
     fetch("https://dinokids.site/payment/create", {
       method: "POST",
       headers: {
@@ -76,7 +114,7 @@ function Checkout() {
   };
 
   const loadButton = () => {
-    if (isLoading && isBlocked)
+    if (isLoading && confirmed)
       return (
         <>
           <br />
@@ -85,7 +123,7 @@ function Checkout() {
           </div>
         </>
       );
-    if (isLoading || !isBlocked) return <></>;
+    if (isLoading || !confirmed) return <></>;
     return (
       <Wallet
         initialization={{ preferenceId: preferenceId as string }}
@@ -96,133 +134,207 @@ function Checkout() {
     );
   };
 
-  const Buttons = () => {
-    if (isBlocked)
-      return (
-        <button
-          className='btn btn-secondary'
-          onClick={() => {
-            setIsBlocked(false);
-            setIsloading(true);
-          }}
-        >
-          Modificar
-        </button>
-      );
-    return (
-      <button
-        className='btn btn-primary'
-        onClick={() => {
-          createPreference();
-          setIsBlocked(true);
-        }}
-      >
-        Aceptar
-      </button>
-    );
-  };
+  const [content, setContent] = useState<"detalle" | "envio" | "pago">(
+    "detalle"
+  );
 
-  const FormInputs = () => {
+  const navList = () => {
     return (
       <>
-        <h5>Envío:</h5>
-        <input
-          type='text'
-          className='form-control mb-2'
-          value={"Seleccione método de envío:"}
-          readOnly
-          disabled
-        />
-        <div className='form-check text-start'>
-          <input
-            className='form-check-input'
-            type='radio'
-            disabled={isBlocked}
-            checked={shipment == "Retiro"}
-            onChange={() => {
-              setShipment("Retiro");
-              setSelected("default");
-            }}
-          />
-          <label className='form-check-label' htmlFor='flexRadioDefault1'>
-            Retiro en Persona
-          </label>
-        </div>
-        <div className='form-check text-start'>
-          <input
-            className='form-check-input'
-            type='radio'
-            disabled={isBlocked}
-            checked={shipment == "Sucursal"}
-            onChange={() => {
-              setShipment("Sucursal");
-            }}
-          />
-          <label className='form-check-label' htmlFor='flexRadioDefault2'>
-            Envío a Sucursal
-          </label>
-        </div>
-        <div className='form-check text-start'>
-          <input
-            className='form-check-input'
-            type='radio'
-            disabled={isBlocked}
-            checked={shipment == "Domicilio"}
-            onChange={() => {
-              setShipment("Domicilio");
-            }}
-          />
-          <label className='form-check-label' htmlFor='flexRadioDefault3'>
-            Envío a Domicilio
-          </label>
-        </div>
-        <select
-          className='form-select my-2'
-          disabled={isBlocked}
-          onChange={(e) => {
-            setSelected(e.currentTarget.value as State);
+        <li
+          className='nav-item'
+          value={"detalle"}
+          onClick={() => {
+            if (!blockedTabs) setContent("detalle");
           }}
-          value={selected}
         >
-          <option value='default'>Seleccione Provincia o Localidad</option>
-          {states.map((e, i) => {
-            return (
-              <option value={e} key={i}>
-                {e}
-              </option>
-            );
-          })}
-        </select>
-        <h5 className='fw-semibold'>
-          Envío: <span className='fw-normal'>${shipPrice || "-"}</span>
-        </h5>
-        <h5 className='fw-semibold'>
-          Total: <span className='fw-normal'>${totalPrice}</span>
-        </h5>
-        <Buttons />
+          <a
+            className={`nav-link ${content == "detalle" && "active"} ${
+              blockedTabs && "disabled"
+            }`}
+            href='#'
+          >
+            Detalle
+          </a>
+        </li>
+        <li
+          className='nav-item'
+          value={"envio"}
+          onClick={() => {
+            if (!blockedTabs) setContent("envio");
+          }}
+        >
+          <a
+            className={`nav-link ${content == "envio" && "active"} ${
+              blockedTabs && "disabled"
+            }`}
+            href='#'
+          >
+            Info. de Envío
+          </a>
+        </li>
+        <li
+          className='nav-item'
+          value={"pago"}
+          onClick={() => {
+            if (disabledForm) {
+              setContent("pago");
+              setBlockCart(true);
+            }
+          }}
+        >
+          <a
+            className={`nav-link ${content == "pago" && "active"} ${
+              (!disabledForm || blockedTabs) && "disabled"
+            }`}
+            href='#'
+          >
+            Pago
+          </a>
+        </li>
       </>
     );
   };
+  
+  // const [shipPrice] = useState(shipCalculator(0.5, state as "default", shipMode)) 
+  const totalPrice = cartPrice + shipPrice;
+
+  const [disabledForm, setDisabledForm] = useState(false);
+  const onSubmit: SubmitHandler<Shipment> = (data) => {
+    setContent("pago");
+    console.log(data);
+    setDisabledForm(true);
+    setBlockCart(true);
+  };
+  const [blockCart, setBlockCart] = useState(false);
+  const [blockedTabs, setBlockedTabs] = useState(false);
 
   return (
-    <div className='App container-fluid p-0 m-0'>
-      <Navbar categories={null} />
-      <div className='row mx-0 mt-2'>
-        <h4 className='mt-2'>Finalizar Compra</h4>
-      </div>
-      <div className='row m-0 mb-5'>
-        <div className='col-sm-6 col-lg-6 col-xl-4 col-12 px-lg-5  mx-auto'>
-          <h5>Detalle:</h5>
-          <CartDetail isCheckout />
+    <div className='App container-fluid p-0 m-0 min-vh-100 d-flex flex-column'>
+      <Navbar categories={null} hideCart />
+      <div className='row m-0 flex-grow-1'>
+        <div className='row m-0 mb-5 checkout_main mt-3'>
+          <ul className='nav nav-tabs justify-content-center'>{navList()}</ul>
+          <div className='col-sm-6 col-lg-6 col-xl-4 col-12 px-lg-5 h-100 mx-auto'>
+            {content == "detalle" && (
+              <>
+                <h5 className='text-start fw-semibold mt-3'>Detalle:</h5>
+                <CartDetail hideButtons={blockCart} />
+                <hr className='m-0 mt-2' />
+                <div className='row'>
+                  <h5 className='text-start fw-semibold mt-3 col-7'>
+                    Total: ${cartPrice}
+                  </h5>
+                  <div className='col-5 my-auto'>
+                    <button
+                      className='btn btn-primary mt-auto'
+                      hidden={blockCart}
+                      onClick={() => {
+                        setContent("envio");
+                        setBlockCart(true);
+                      }}
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      className='btn btn-danger mt-auto'
+                      hidden={!blockCart}
+                      onClick={() => {
+                        setBlockCart(false);
+                      }}
+                    >
+                      Modificar
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            <ShippingForm
+              hidden={content !== "envio"}
+              methods={formMethods}
+              onSubmit={onSubmit}
+              disabled={disabledForm}
+            />
+            <div
+              className='text-center mt-2'
+              hidden={!disabledForm || content !== "envio"}
+            >
+              <button
+                className='btn btn-danger'
+                onClick={() => {
+                  setDisabledForm(false);
+                }}
+              >
+                Modificar
+              </button>
+            </div>
+            {content == "pago" && (
+              <>
+                <div className='text-start'>
+                  <h5 className='fw-semibold mt-3'>Realizar pago:</h5>
+                  <div className='card p-3'>
+                    <div className='card-body'>
+                      <h4 className='card-title m-0'>Resumen</h4>
+                      <h6 className='cart-subtitle text-primary fw-semibold mb-4'>
+                        {shipMode == "shipping"
+                          ? "Envío a Domicilio"
+                          : "Retiro en Sucursal"}
+                      </h6>
+                      <div className='card-text row'>
+                        <p className='col-8'>Carrito:</p>
+                        <p className='col-4'>${cartPrice}</p>
+                      </div>
+                      <div className='card-text row'>
+                        <p className='col-8'>Envío:</p>
+                        <p className='col-4'>${shipPrice}</p>
+                      </div>
+                      <hr className='m-0 mb-2' />
+                      <div className='card-text row'>
+                        <p className='col-8 m-0'>Total:</p>
+                        <p className='col-4 m-0'>${totalPrice}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='text-center'>
+                    <button
+                      className='btn btn-primary mt-2'
+                      hidden={confirmed}
+                      onClick={() => {
+                        if (disabledForm && blockCart) {
+                          setConfirmed(true);
+                          setBlockedTabs(true);
+                          setIsloading(true)
+                          createPreference();
+                        }
+                      }}
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      className='btn btn-danger mt-2'
+                      hidden={!confirmed}
+                      onClick={() => {
+                        setBlockedTabs(false);
+                        setConfirmed(false);
+                      }}
+                    >
+                      Modificar
+                    </button>
+                    {loadButton()}
+                  </div>
+                </div>
+
+                {/* <FormInputs />
+                {loadButton()} */}
+              </>
+            )}
+          </div>
+          {/*<div className='col-sm-6 col-lg-4 col-xl-3 col-12 mx-sm-auto px-sm-2 px-5'>
+            
+          </div>*/}
         </div>
-        <div className='col-sm-6 col-lg-4 col-xl-3 col-12 mx-sm-auto px-sm-2 px-5'>
-          <FormInputs />
-          {loadButton()}
-        </div>
       </div>
-      <div className="row m-0">
-        <Footer />
-      </div>
+
       <FloatingButton />
     </div>
   );
