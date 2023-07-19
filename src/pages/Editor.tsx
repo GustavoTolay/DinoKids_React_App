@@ -3,6 +3,7 @@ import Itemform from "../components/Itemform";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../types";
+import NewItemForm from "../components/newItemForm";
 
 const Editor = () => {
   const { id } = useParams();
@@ -29,7 +30,8 @@ const Editor = () => {
             <h3>Editar Producto</h3>
           </div>
           <div className='row m-0'>
-            <Itemform product={productValues} />
+            {/* <Itemform product={productValues} /> */}
+            <NewItemForm />
           </div>
         </div>
       </>
