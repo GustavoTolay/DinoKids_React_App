@@ -4,6 +4,7 @@ import { Category } from "../types";
 import CartDetail from "./cartDetail";
 import { useContext, useState } from "react";
 import { CartContext } from "../contexts/cartContext";
+import { ContentContext } from "../contexts/contentContext";
 
 type Props = {
   categories: Category[] | null;
@@ -11,8 +12,9 @@ type Props = {
 };
 
 function Navbar({ categories, hideCart }: Props) {
+  hideCart = true
   const { cartList } = useContext(CartContext);
-
+  const { setFilters, resetAll } = useContext(ContentContext)
   const [cartButton, setCartButton] = useState(true);
 
   const dropdownList = () => {
@@ -28,14 +30,15 @@ function Navbar({ categories, hideCart }: Props) {
             Categorias
           </a>
           <ul className='dropdown-menu mb-2 bg-white text-black'>
-            {categories.map((e, i) => {
+            {categories.map((category, index) => {
               return (
-                <li key={i}>
+                <li key={index}>
                   <Link
                     className='dropdown-item text-black text-center'
-                    to={`/category/${e.name}`}
+                    to={`/category/${category.name}`}
+                    onClick={() => setFilters({ category: category.name })}
                   >
-                    {e.name}
+                    {category.name}
                   </Link>
                 </li>
               );
@@ -86,6 +89,7 @@ function Navbar({ categories, hideCart }: Props) {
                 className='nav-link active fw-bold'
                 aria-current='page'
                 to={"/"}
+                onClick={() => resetAll()}
               >
                 Home
               </Link>
