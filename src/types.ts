@@ -1,5 +1,5 @@
-export interface Product {
-  _id: string;
+export type Product = {
+  _id?: string;
   name: string;
   description: string;
   image: string;
@@ -7,15 +7,16 @@ export interface Product {
   brand: string;
   available: boolean;
   category: string;
-  inventary: Inventary[]
+  inventory: Inventory[]
 }
 
-export type Inventary = {
+export type Inventory = {
   model: string;
   sizes: Sizes[];
 }
 
 type Sizes = {
+  _id?: string;
   size: string;
   stock: number;
   weight: number
