@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Product, Inventary } from "../types";
+import { Product, Inventory } from "../types";
 import React from "react";
 type Props = {
   product: Product | undefined;
@@ -7,11 +7,11 @@ type Props = {
 
 const Itemform = (props: Props) => {
   const [selectedFile, setSelectedFile] = useState<File>();
-  const [modelValues, setModelValues] = useState<Inventary[]>(() => {
+  const [modelValues, setModelValues] = useState<Inventory[]>(() => {
     if (!props.product) {
       return [];
     }
-    return props.product.inventary;
+    return props.product.inventory;
   });
   const [productValues, setProductValues] = useState<Product>(() => {
     if (!props.product) {
@@ -22,7 +22,7 @@ const Itemform = (props: Props) => {
         category: "category1",
         description: "",
         image: "",
-        inventary: [],
+        inventory: [],
         price: 0,
         name: "",
       };
@@ -132,7 +132,7 @@ const Itemform = (props: Props) => {
     setModelValues(data);
   };
 
-  const sizeList = (element: Inventary, elementIndex: number) => {
+  const sizeList = (element: Inventory, elementIndex: number) => {
     const list = element.sizes.map((e, index) => {
       return (
         <React.Fragment key={index}>
@@ -213,7 +213,7 @@ const Itemform = (props: Props) => {
     e.preventDefault();
     const token = window.localStorage.getItem("UserSession");
     const info = productValues;
-    info.inventary = modelValues;
+    info.inventory = modelValues;
     const formData = new FormData()
     if(!props.product) formData.append("image", selectedFile as Blob);
     formData.append("product", JSON.stringify(info))

@@ -3,19 +3,17 @@ import CartDetail from "../components/cartDetail";
 import Navbar from "../components/navbar";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import { CartContext } from "../contexts/cartContext";
-import {
-  shipCalculator,
-} from "../utils/shipCalculator";
+import { shipCalculator } from "../utils/shipCalculator";
 import FloatingButton from "../components/floatingButton";
 
-import configMP from "../utils/configMP"
+import configMP from "../utils/configMP";
 initMercadoPago(configMP.publicKey);
 import { Product, Shipment } from "../types";
 import ShippingForm from "../components/shippingForm";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 type Item = {
-  title: string;
+  id: string;
   unit_price: number;
   quantity: number;
 };
@@ -23,18 +21,22 @@ type Item = {
 type PreferenceRequest = {
   items: Item[];
   shipments?: {
-    cost: number,
-    mode: "not_specified"
-  }
-}
+    cost: number;
+    mode: "not_specified";
+  };
+};
 
 function Checkout() {
   const { cartList, cartPrice, cartWeight } = useContext(CartContext);
-  
-  const itemsList: Item[] = cartList.map((e) => {
-    return { title: e.description, quantity: e.quantity, unit_price: e.price };
+
+  const itemsList: Item[] = cartList.map((item) => {
+    return {
+      id: item.size_id,
+      quantity: item.quantity,
+      unit_price: item.price,
+    };
   });
-  
+
   const [preferenceId, setPreferenceId] = useState<string>();
   const [isLoading, setIsloading] = useState<boolean>(true);
   const [sufficientStock, setSufficientStock] = useState<boolean>();
@@ -60,7 +62,7 @@ function Checkout() {
         if (!stockList) return;
         const stock = cartList.map((product) => {
           const current = stockList.find((e) => e._id == product._id);
-          const model = current?.inventary.find(
+          const model = current?.inventory.find(
             (e) => e.model == product.model
           );
           const size = model?.sizes.find((e) => e.size == product.size);
@@ -87,7 +89,7 @@ function Checkout() {
     shipments: {
       cost: shipPrice,
       mode: "not_specified",
-    }
+    },
   };
 
   const createPreference = () => {
@@ -195,8 +197,8 @@ function Checkout() {
       </>
     );
   };
-  
-  // const [shipPrice] = useState(shipCalculator(0.5, state as "default", shipMode)) 
+
+  // const [shipPrice] = useState(shipCalculator(0.5, state as "default", shipMode))
   const totalPrice = cartPrice + shipPrice;
 
   const [disabledForm, setDisabledForm] = useState(false);
@@ -303,7 +305,7 @@ function Checkout() {
                         if (disabledForm && blockCart) {
                           setConfirmed(true);
                           setBlockedTabs(true);
-                          setIsloading(true)
+                          setIsloading(true);
                           createPreference();
                         }
                       }}

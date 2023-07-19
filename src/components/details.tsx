@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Inventary, Product } from "../types";
+import { Inventory, Product } from "../types";
 // import "./css/product.css";
 import React, {
   useContext,
@@ -26,7 +26,7 @@ var key2 = 0;
 function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
   const { reduceCartList, cartList } = useContext(CartContext);
   const [size, setSize] = useState("default");
-  const index = product.inventary.findIndex((e) => e.model == model);
+  const index = product.inventory.findIndex((e) => e.model == model);
 
   const Input = () => {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -44,7 +44,7 @@ function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
           <option value='default' className='fs-6'>
             Talle
           </option>
-          {product.inventary[index].sizes.map((e, i) => {
+          {product.inventory[index].sizes.map((e, i) => {
             if (e.stock)
               return (
                 <option className='fs-6' value={e.size} key={i}>
@@ -57,18 +57,20 @@ function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
     );
   };
 
-  const sizeIndex = product.inventary[index].sizes.findIndex(
+  const sizeIndex = product.inventory[index].sizes.findIndex(
     (e) => e.size == size
   );
-  const weight = product.inventary[index].sizes[sizeIndex]?.weight || 0;
-  const currentStock = product.inventary[index].sizes[sizeIndex]?.stock || 0;
+  const weight = product.inventory[index].sizes[sizeIndex]?.weight || 0;
+  const currentStock = product.inventory[index].sizes[sizeIndex]?.stock || 0;
+  const size_id = product.inventory[index].sizes[sizeIndex]?._id || "" as string
+  console.log({size_id, weight, currentStock})
   const inCart =
     cartList.find(
       (e) => e.name == product.name && e.model == model && e.size == size
     )?.quantity || 0;
 
   return (
-    <div className='row'>
+    <div className='row' hidden>
       <div className='col-auto'>
         <div className='input-group m-2 ms-0 m-sm-2'>
           <button
@@ -101,6 +103,7 @@ function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
                 number: quantity,
                 product: {
                   ...product,
+                  size_id,
                   model,
                   size,
                   quantity,
@@ -120,13 +123,13 @@ function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
 }
 
 function Details({ product, available }: Props) {
-  const [modelValue, setModelValue] = useState(product.inventary[0].model);
+  const [modelValue, setModelValue] = useState(product.inventory[0].model);
   const [quantity, setQuantity] = useState(0);
 
   const sizesList = () => {
-    const model = product.inventary.find(
+    const model = product.inventory.find(
       (e) => e.model == modelValue
-    ) as Inventary;
+    ) as Inventory;
     const sizeList = model.sizes.filter((e) => e.stock > 0);
     const list = sizeList.map((e) => {
       key2 = key2 + 1;
@@ -165,7 +168,7 @@ function Details({ product, available }: Props) {
         Authorization: `Bearer ${token}`,
       },
     };
-    fetch(`http://localhost:3000/products/${product._id}`, options)
+    fetch(`https://dinokids.site/products/${product._id}`, options)
       .then((res) => res.json())
       .then((res) => console.log(res));
   };
@@ -183,7 +186,7 @@ function Details({ product, available }: Props) {
   };
 
   const list = () => {
-    const options = product.inventary.map((e, i) => {
+    const options = product.inventory.map((e, i) => {
       return (
         <option value={e.model} key={i}>
           {e.model}

@@ -2,6 +2,7 @@ import { createContext, useReducer } from "react";
 import { Product } from "../types";
 
 export type CartProduct = Omit<Product, "inventary"> & {
+  size_id: string;
   model: string;
   size: string;
   stock: number;
