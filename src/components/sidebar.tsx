@@ -11,7 +11,7 @@ interface Props {
 var key = 0;
 
 function Sidebar({ categories }: Props) {
-  const { product } = useParams()
+  const { product } = useParams();
   const { setFilters, filters } = useContext(ContentContext);
 
   const adminActions = () => {
@@ -21,20 +21,25 @@ function Sidebar({ categories }: Props) {
     }
     return (
       <>
-        <h5 className='py-2'>Acciones</h5>
+        <h5 className='py-2 m-0 text-white'>Acciones</h5>
         <div className='list-group '>
-          <Link
-            to={"/AddItem"}
-            className='list-group-item list-group-item-action list-group-item-light'
-          >
-            Añadir producto
+          <Link to={"/AddItem"}>
+            <button className='btn btn-danger mb-2'>Añadir producto</button>
           </Link>
-          <Link
-            to={"/Add"}
-            className='list-group-item list-group-item-action list-group-item-light'
-          >
-            Añadir categoria
+          <Link to={"/AddCategory"}>
+            <button className='btn btn-danger mb-2'>Añadir categoria</button>
           </Link>
+          <Link to={"/Login"}>
+            <button className='btn btn-danger mb-2'>Iniciar Sesión</button>
+          </Link>
+          <div>
+            <button
+              className='btn btn-danger mb-2'
+              onClick={() => window.localStorage.removeItem("UserSession")}
+            >
+              Cerrar Sesión
+            </button>
+          </div>
         </div>
       </>
     );
