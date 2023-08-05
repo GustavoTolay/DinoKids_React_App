@@ -8,6 +8,7 @@ import Creator from "./pages/Creator";
 import AddCategory from "./pages/AddCategory";
 import Checkout from "./pages/Checkout";
 import Products from "./pages/Products";
+import { Contact } from "./pages/Contact";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/additem' element={<Creator />} />
         <Route path='/addcategory' element={<AddCategory />} />
         <Route path="/checkout" element={<Checkout />}/>
+        <Route path="/contact" element={<Contact />}/>
       </Routes>
     </>
   );

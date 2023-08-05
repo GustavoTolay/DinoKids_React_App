@@ -103,6 +103,9 @@ function Navbar({ categories, hideCart }: Props) {
               >
                 Carrito
               </a>
+              <Link to={"/contact"} className='nav-link active fw-bold'>
+                Dirección y Contacto
+              </Link>
             </div>
           </div>
           <button
