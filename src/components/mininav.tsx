@@ -7,7 +7,7 @@ type Props = {
 }
 
 function Mininav({ product }: Props) {
-  const { filters, resetAll } =
+  const { filters, resetAll, activeCategory, setFilters } =
     useContext(ContentContext);
 
   const tabsList = () => {
@@ -61,10 +61,11 @@ function Mininav({ product }: Props) {
         </li>
         <li className='breadcrumb-item'>
           <Link
-            to={`/category/${filters.category}`}
+            to={`/category/${activeCategory}`}
             className="text-white"
+            onClick={() => setFilters({ category: activeCategory as string })}
           >
-            {filters.category}
+            {activeCategory}
           </Link>
         </li>
         <li className='breadcrumb-item active text-white' aria-current='page'>

@@ -15,6 +15,8 @@ type Context = {
   // activeProduct: Info;
   // setActiveProduct: Dispatch<SetStateAction<Info>>;
   resetAll: VoidFunction;
+  setActiveCategory: Dispatch<SetStateAction<string | undefined>>;
+  activeCategory: string | undefined
 };
 
 export const ContentContext = createContext<Context>({} as Context);
@@ -27,17 +29,18 @@ const ContentProvider = ({ children }: Props) => {
    }
 
   const [filters, setFilters] = useState(initialState);
+  const [activeCategory, setActiveCategory] = useState<string>()
   // const [activeProduct, setActiveProduct] = useState<Info>({ _id: product })
 
   const resetAll = () => {
     setFilters({ category: "all" });
-    // setActiveProduct({})
+    setActiveCategory(undefined);
   }
 
   console.log(filters)
 
   return (
-    <ContentContext.Provider value={{ filters, setFilters, resetAll }}>
+    <ContentContext.Provider value={{ filters, setFilters, resetAll, setActiveCategory, activeCategory }}>
       {children}
     </ContentContext.Provider>
   );

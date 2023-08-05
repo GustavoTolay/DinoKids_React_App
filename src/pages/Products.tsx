@@ -3,12 +3,14 @@ import Sidebar from "../components/sidebar";
 import Details from "../components/details";
 import Mininav from "../components/mininav";
 import { Category, Product } from "../types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import FloatingButton from "../components/floatingButton";
+import { ContentContext } from "../contexts/contentContext";
 
 function Products() {
   const { id } = useParams();
+  const { setActiveCategory } = useContext(ContentContext)
 
   const [productValues, setProductValues] = useState<Product>();
   const [categoriesValues, setCategoriesValues] = useState<Category[]>([]);
@@ -22,6 +24,7 @@ function Products() {
         console.log(product);
         setProductValues(product);
         setIsProductLoading(false);
+        setActiveCategory(product.category)
       });
   }, []);
 

@@ -9,7 +9,7 @@ interface Props {
 }
 
 function List({ products }: Props) {
-  const { setFilters } = useContext(ContentContext);
+  const { setActiveCategory } = useContext(ContentContext);
 
   return (
     <div className='col-12 col-sm-9 col-lg-10 p-0'>
@@ -21,13 +21,11 @@ function List({ products }: Props) {
                 <div className='ratio ratio-1x1'>
                   <Link
                     to={`/product/${product._id}`}
-                    onClick={() => {
-                      setFilters({ category: product.category})
-                    }}
+                    onClick={() => setActiveCategory(product.category)}
                   >
                     <img
                       className='card-img-top h-100 rounded'
-                      src={`https://dinokids.site/${product.image}`}
+                      src={`https://dinokids.site/resized/${product.image}`}
                     />
                   </Link>
                 </div>
