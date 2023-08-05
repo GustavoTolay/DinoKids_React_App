@@ -8,7 +8,7 @@ import FloatingButton from "../components/floatingButton";
 
 import configMP from "../utils/configMP";
 initMercadoPago(configMP.publicKey);
-import { Product, Shipment } from "../types";
+import { Shipment } from "../types";
 import ShippingForm from "../components/shippingForm";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -27,7 +27,7 @@ type PreferenceRequest = {
 };
 
 function Checkout() {
-  const { cartList, cartPrice, cartWeight } = useContext(CartContext);
+  const { cartList, cartPrice } = useContext(CartContext);
 
   const itemsList: Item[] = cartList.map((item) => {
     return {
@@ -39,41 +39,41 @@ function Checkout() {
 
   const [preferenceId, setPreferenceId] = useState<string>();
   const [isLoading, setIsloading] = useState<boolean>(true);
-  const [sufficientStock, setSufficientStock] = useState<boolean>();
+  // const [sufficientStock, setSufficientStock] = useState<boolean>();
 
   const [confirmed, setConfirmed] = useState(false);
 
-  const verifyStock = () => {
-    const idList = cartList.map(({ _id }) => {
-      return { _id };
-    });
-    fetch("https://dinokids.site/products/stock", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(idList),
-    })
-      .then((res) => {
-        if (res.status == 404) return null;
-        return res.json();
-      })
-      .then((stockList: Product[] | null) => {
-        if (!stockList) return;
-        const stock = cartList.map((product) => {
-          const current = stockList.find((e) => e._id == product._id);
-          const model = current?.inventory.find(
-            (e) => e.model == product.model
-          );
-          const size = model?.sizes.find((e) => e.size == product.size);
-          return (size?.stock as number) >= product.quantity;
-        });
-        setSufficientStock(!stock.includes(false));
-      })
-      .catch((error) => {
-        console.error(error.json());
-      });
-  };
+  // const verifyStock = () => {
+  //   const idList = cartList.map(({ _id }) => {
+  //     return { _id };
+  //   });
+  //   fetch("https://dinokids.site/products/stock", {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(idList),
+  //   })
+  //     .then((res) => {
+  //       if (res.status == 404) return null;
+  //       return res.json();
+  //     })
+  //     .then((stockList: Product[] | null) => {
+  //       if (!stockList) return;
+  //       const stock = cartList.map((product) => {
+  //         const current = stockList.find((e) => e._id == product._id);
+  //         const model = current?.inventory.find(
+  //           (e) => e.model == product.model
+  //         );
+  //         const size = model?.sizes.find((e) => e.size == product.size);
+  //         return (size?.stock as number) >= product.quantity;
+  //       });
+  //       setSufficientStock(!stock.includes(false));
+  //     })
+  //     .catch((error) => {
+  //       console.error(error.json());
+  //     });
+  // };
 
   const formMethods = useForm<Shipment>({
     defaultValues: { ship_mode: "withdraw" },

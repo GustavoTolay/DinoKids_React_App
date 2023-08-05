@@ -1,5 +1,5 @@
 import Navbar from "../components/navbar";
-import Itemform from "../components/Itemform";
+// import Itemform from "../components/Itemform";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../types";
@@ -10,6 +10,7 @@ const Editor = () => {
 
   const [productValues, setProductValues] = useState<Product>();
   const [isLoading, setIsLoading] = useState(true);
+  productValues;
 
   useEffect(() => {
     fetch(`https://dinokids.site/products/${id}`)
