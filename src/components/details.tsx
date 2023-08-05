@@ -202,7 +202,7 @@ function Details({ product, available }: Props) {
         <div className='row g-0'>
           <div className='col-12 col-sm-4 p-3'>
             <img
-              src={`https://dinokids.site/${product.image}`}
+              src={`https://dinokids.site/resized/${product.image}`}
               className='img-fluid rounded-start rounded-end'
             />
           </div>
