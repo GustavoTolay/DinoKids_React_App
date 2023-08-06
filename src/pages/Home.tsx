@@ -60,8 +60,10 @@ function Home() {
 
   return (
     <div className='App container-fluid p-0 m-0 min-vh-100 d-flex flex-column'>
-      <Navbar categories={categories} />
-      <Mininav></Mininav>
+      <div className="sticky-top">
+        <Navbar categories={categories} />
+        <Mininav categories={categories}></Mininav>
+      </div>
       {loadPage()}
       <FloatingButton />
     </div>
