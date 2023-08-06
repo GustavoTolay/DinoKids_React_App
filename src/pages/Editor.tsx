@@ -10,7 +10,6 @@ const Editor = () => {
 
   const [productValues, setProductValues] = useState<Product>();
   const [isLoading, setIsLoading] = useState(true);
-  productValues;
 
   useEffect(() => {
     fetch(`https://dinokids.site/products/${id}`)
@@ -32,7 +31,7 @@ const Editor = () => {
           </div>
           <div className='row m-0'>
             {/* <Itemform product={productValues} /> */}
-            <NewItemForm />
+            <NewItemForm product={productValues}/>
           </div>
         </div>
       </>

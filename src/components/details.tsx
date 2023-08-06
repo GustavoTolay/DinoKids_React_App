@@ -1,12 +1,7 @@
 import { Link } from "react-router-dom";
 import { Inventory, Product } from "../types";
 // import "./css/product.css";
-import React, {
-  useContext,
-  useState,
-  Dispatch,
-  SetStateAction
-} from "react";
+import React, { useContext, useState, Dispatch, SetStateAction } from "react";
 import { CartContext } from "../contexts/cartContext";
 
 interface Props {
@@ -62,8 +57,9 @@ function Buttons({ product, model, setQuantity, quantity }: ButtonsProps) {
   );
   const weight = product.inventory[index].sizes[sizeIndex]?.weight || 0;
   const currentStock = product.inventory[index].sizes[sizeIndex]?.stock || 0;
-  const size_id = product.inventory[index].sizes[sizeIndex]?._id || "" as string
-  console.log({size_id, weight, currentStock})
+  const size_id =
+    product.inventory[index].sizes[sizeIndex]?._id || ("" as string);
+  console.log({ size_id, weight, currentStock });
   const inCart =
     cartList.find(
       (e) => e.name == product.name && e.model == model && e.size == size
@@ -135,7 +131,7 @@ function Details({ product, available }: Props) {
       key2 = key2 + 1;
       return (
         <React.Fragment key={key2}>
-          <span className='badge bg-secondary'>{e.size}</span>
+          <span className='badge bg-secondary pb-1'>{e.size}</span>
           <span> </span>
         </React.Fragment>
       );
@@ -143,6 +139,14 @@ function Details({ product, available }: Props) {
 
     return list;
   };
+
+  function modelsList() {
+    return product.inventory.map((model, index) => (
+      <span className='badge bg-primary pb-1 me-1' key={index}>
+        {model.model}
+      </span>
+    ));
+  }
 
   const adminActions = () => {
     const token = window.localStorage.getItem("UserSession");
@@ -152,9 +156,11 @@ function Details({ product, available }: Props) {
     return (
       <>
         <Link to={`/edititem/${product._id}`}>
-          <button className='m-2'>Editar Producto</button>
+          <button className='m-2 btn btn-danger'>Editar Producto</button>
         </Link>
-        <button onClick={deleteProduct}>Eliminar Producto</button>
+        <button className='btn btn-danger' onClick={deleteProduct}>
+          Eliminar Producto
+        </button>
       </>
     );
   };
@@ -213,23 +219,22 @@ function Details({ product, available }: Props) {
                 <div className='card-body p-0'>
                   <h5>
                     {product.description}{" "}
-                    <span className='badge bg-danger'>
-                      {modelValue}
-                    </span>
+                    <span className='badge bg-danger pb-1'>{modelValue}</span>
                   </h5>
-                  <h5>Talles en stock: {sizesList()}</h5>
+
                   <h5>
                     Marca:{" "}
-                    <span className='badge bg-success'>
+                    <span className='badge bg-success pb-1'>
                       {product.brand}
                     </span>
                   </h5>
                   <h5>
                     Precio:{" "}
-                    <span className='badge bg-success'>
+                    <span className='badge bg-success pb-1'>
                       {product.price}
                     </span>
                   </h5>
+                  <h5>Modelos en Stock: {modelsList()}</h5>
                   <select
                     className='form-select fs-5 py-1'
                     value={selected}
@@ -240,6 +245,7 @@ function Details({ product, available }: Props) {
                     </option>
                     {list()}
                   </select>
+                  <h5 className='mt-3'>Talles en stock: {sizesList()}</h5>
                 </div>
               </div>
               <Buttons

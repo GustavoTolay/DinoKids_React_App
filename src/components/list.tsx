@@ -17,23 +17,25 @@ function List({ products }: Props) {
         {products.map((product) => {
           return (
             <div className='col' key={product._id}>
-              <div className='card p-1 border-2 m-0 px-1 h-100 product'>
-                <div className='ratio ratio-1x1'>
-                  <Link
-                    to={`/product/${product._id}`}
-                    onClick={() => setActiveCategory(product.category)}
-                  >
+              <Link
+                to={`/product/${product._id}`}
+                onClick={() => setActiveCategory(product.category)}
+              >
+                <div className='card p-1 border-2 m-0 px-1 h-100 product'>
+                  <div className='ratio ratio-1x1'>
                     <img
                       className='card-img-top h-100 rounded'
                       src={`https://dinokids.site/resized/${product.image}`}
                     />
-                  </Link>
+                  </div>
+                  <div className='card-body m-0 mt-1 p-0'>
+                    <p className='card-title m-0'>{product.name}</p>
+                    <h4 className='card-text fw-normal m-0'>
+                      ${product.price}
+                    </h4>
+                  </div>
                 </div>
-                <div className='card-body m-0 mt-1 p-0'>
-                  <p className='card-title m-0'>{product.name}</p>
-                  <h5 className='card-text m-0'>${product.price}</h5>
-                </div>
-              </div>
+              </Link>
             </div>
           );
         })}

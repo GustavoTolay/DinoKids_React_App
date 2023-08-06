@@ -42,7 +42,7 @@ function Products() {
     <>
       <div className='App container-fluid p-0 m-0 min-vh-100 d-flex flex-column'>
         <Navbar categories={categoriesValues} />
-        <Mininav product={productValues?.name}/>
+        <Mininav product={productValues?.name} hideMobileNav/>
         <div className='row m-0 flex-grow-1'>
           {isSidebarLoading ? <div className="col-3 col-lg-2 d-none d-sm-block"></div> : <Sidebar categories={categoriesValues} />}
           {isProductLoading ? <></> : <Details product={productValues as Product} available />}

@@ -8,13 +8,19 @@ import {
 import { Product } from "../types";
 import React, { useState } from "react";
 
-type Props = {
+type SizeListProps = {
   modelIndex: number;
   control: Control<Product, any>;
   register: UseFormRegister<Product>;
+  hideButtons: boolean;
 };
 
-function SizeList({ modelIndex, control, register }: Props) {
+function SizeList({
+  modelIndex,
+  control,
+  register,
+  hideButtons,
+}: SizeListProps) {
   const { append, remove, fields } = useFieldArray({
     control,
     name: `inventory.${modelIndex}.sizes`,
@@ -74,6 +80,7 @@ function SizeList({ modelIndex, control, register }: Props) {
             <button
               className='btn btn-sm btn-danger'
               onClick={() => remove(index)}
+              hidden={hideButtons}
             >
               Eliminar Talle
             </button>
@@ -89,8 +96,10 @@ function SizeList({ modelIndex, control, register }: Props) {
       {fieldList()}
       <div className='text-center mt-2'>
         <button
+          type='button'
           className='btn btn-sm btn-primary'
           onClick={() => append({ size: "", stock: 0, weight: 0 })}
+          hidden={hideButtons}
         >
           Agregar Talle
         </button>
@@ -99,8 +108,22 @@ function SizeList({ modelIndex, control, register }: Props) {
   );
 }
 
-export default function NewItemForm() {
-  const { register, handleSubmit, control } = useForm<Product>();
+type FormProps = {
+  product?: Product;
+};
+
+export default function NewItemForm({ product }: FormProps) {
+  const showButtons = !product;
+  function setDefaultValues() {
+    if (product) {
+      const { _id, ...formValues } = product;
+      return formValues;
+    }
+    return;
+  }
+  const { register, handleSubmit, control } = useForm<Product>({
+    defaultValues: setDefaultValues(),
+  });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "inventory",
@@ -109,27 +132,47 @@ export default function NewItemForm() {
   const [image, setImage] = useState<File>();
 
   const onSubmit: SubmitHandler<Product> = (form) => {
-    console.log(form)
-    setLoading(true);
+    console.log(form);
+    setLoadState("loading");
     const token = window.localStorage.getItem("UserSession");
-    const formData = new FormData();
-    formData.append("image", image as Blob);
-    formData.append("product", JSON.stringify(form))
-    const options: RequestInit = {
-      method: "POST",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    fetch("https://dinokids.site/products", options)
-      .then(res => res.json())
+    function setOptions() {
+      if (product) {
+        const { inventory, ...formValues } = form;
+        formValues._id = product._id;
+        console.log(formValues)
+        const options: RequestInit = {
+          method: "PUT",
+          body: JSON.stringify(formValues),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+        };
+        return options;
+      }
+      const formData = new FormData();
+      formData.append("image", image as Blob);
+      formData.append("product", JSON.stringify(form));
+      const options: RequestInit = {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      return options
+    }
+    fetch("https://dinokids.site/products", setOptions())
+      .then((res) => res.json())
       .then((res) => {
-        console.log(res)
+        console.log(res);
+        setLoadState("loaded");
       });
   };
 
-  const [loading, setLoading] = useState(true);
+  const [loadState, setLoadState] = useState<"standby" | "loading" | "loaded">(
+    "standby"
+  );
 
   function modelsList() {
     const list = fields.map((field, index) => {
@@ -143,11 +186,18 @@ export default function NewItemForm() {
             className='form-control'
             {...register(`inventory.${index}.model`)}
           />
-          <SizeList modelIndex={index} control={control} register={register} />
+          <SizeList
+            modelIndex={index}
+            control={control}
+            register={register}
+            hideButtons={!showButtons}
+          />
           <div className='text-center mt-2'>
             <button
+              type='button'
               className='btn btn-dark btn-sm'
               onClick={() => remove(index)}
+              hidden={!showButtons}
             >
               Eliminar Modelo
             </button>
@@ -216,9 +266,10 @@ export default function NewItemForm() {
             </div>
           </div>
           <div className='col-4 text-start px-5'>
-            {modelsList()}
+            <fieldset disabled={!showButtons}>{modelsList()}</fieldset>
             <div className='text-center mt-2'>
               <button
+                type='button'
                 className='btn btn-primary'
                 onClick={() =>
                   append({
@@ -226,13 +277,14 @@ export default function NewItemForm() {
                     sizes: [],
                   })
                 }
+                hidden={!showButtons}
               >
                 Agregar Modelo.
               </button>
             </div>
           </div>
           <div className='col-4 px-5'>
-            <div className='row'>
+            <div className='row' hidden={!showButtons}>
               <h5>Agregar Imagen</h5>
               <p>De preferencia en proporción 1:1 (cuadrada pues).</p>
               <div className='mb-3'>
@@ -248,15 +300,20 @@ export default function NewItemForm() {
               <hr />
             </div>
             <div className='row'>
-              <h5>Feedback (Retroali...)</h5>
+              <h5>Feedback</h5>
               <div
                 className='spinner-border text-primary mx-auto mt-2'
                 role='status'
-                hidden={loading}
+                hidden={loadState != "loading"}
               >
                 <span className='visually-hidden'>Loading...</span>
               </div>
-              <h4 className='text-primary mt-2' hidden={!loading}>Hecho!, espero</h4>
+              <h4 className='text-primary mt-2' hidden={loadState != "loaded"}>
+                Hecho!, espero
+              </h4>
+              <h4 className='text-primary mt-2' hidden={loadState != "standby"}>
+                Esperando...
+              </h4>
             </div>
           </div>
         </div>
