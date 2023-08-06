@@ -68,7 +68,7 @@ function Navbar({ categories, hideCart }: Props) {
             <span className='main_logo'>{"  "}DinoKids</span>
           </Link>
           <button
-            className='navbar-toggler'
+            className='navbar-toggler bg-secondary_blue'
             type='button'
             data-bs-toggle='collapse'
             data-bs-target='#navbarNavAltMarkup'
