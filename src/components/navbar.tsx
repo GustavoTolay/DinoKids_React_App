@@ -5,6 +5,7 @@ import CartDetail from "./cartDetail";
 import { useContext, useState } from "react";
 import { CartContext } from "../contexts/cartContext";
 import { ContentContext } from "../contexts/contentContext";
+import "bootstrap/js/dist/collapse"
 
 type Props = {
   categories: Category[] | null;
@@ -68,7 +69,7 @@ function Navbar({ categories, hideCart }: Props) {
             <span className='main_logo'>{"  "}DinoKids</span>
           </Link>
           <button
-            className='navbar-toggler bg-secondary_blue'
+            className='navbar-toggler bg-secondary_blue d-none'
             type='button'
             data-bs-toggle='collapse'
             data-bs-target='#navbarNavAltMarkup'
@@ -95,7 +96,7 @@ function Navbar({ categories, hideCart }: Props) {
               </Link>
               {dropdownList()}
               <a
-                className='fw-bold nav-link active'
+                className='fw-bold nav-link active d-none'
                 data-bs-toggle='offcanvas'
                 data-bs-target='#offcanvas'
                 aria-controls='offcanvas'
@@ -124,7 +125,7 @@ function Navbar({ categories, hideCart }: Props) {
         </div>
       </nav>
       <div
-        className='offcanvas offcanvas-start bg-pink text-white'
+        className='offcanvas offcanvas-start bg-pink text-white d-none'
         data-bs-scroll='true'
         tabIndex={-1}
         id='offcanvas'
