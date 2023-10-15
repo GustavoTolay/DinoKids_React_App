@@ -1,33 +1,106 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import LogIn from "./pages/Login";
-import SignIn from "./pages/Singin";
-import Home from "./pages/Home";
-import Editor from "./pages/Editor";
-import Creator from "./pages/Creator";
-import AddCategory from "./pages/AddCategory";
-import Checkout from "./pages/Checkout";
-import Products from "./pages/Products";
-import { Contact } from "./pages/Contact";
+import { Suspense, lazy } from "react";
+
+const LogIn = lazy(() => import("./pages/Login"));
+const SignIn = lazy(() => import("./pages/Singin"));
+const Home = lazy(() => import("./pages/Home"));
+const Editor = lazy(() => import("./pages/Editor"));
+const Creator = lazy(() => import("./pages/Creator"));
+const AddCategory = lazy(() => import("./pages/AddCategory"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Products = lazy(() => import("./pages/Products"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path='/category/:category' element={<Home />} />
-        <Route path='/' element={<Home />} />
-        <Route path='/login' element={<LogIn />} />
-        <Route path='/signin' element={<SignIn />} />
+        <Route
+          path='/category/:category'
+          element={
+            <Suspense fallback={""}>
+              <Home />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/'
+          element={
+            <Suspense fallback={""}>
+              <Home />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/login'
+          element={
+            <Suspense fallback={""}>
+              <LogIn />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/signin'
+          element={
+            <Suspense fallback={""}>
+              <SignIn />
+            </Suspense>
+          }
+        />
         <Route
           path='/product/:id'
-          errorElement={<Home />}
-          element={<Products />}
+          errorElement={
+            <Suspense fallback={""}>
+              <Home />
+            </Suspense>
+          }
+          element={
+            <Suspense fallback={""}>
+              <Products />
+            </Suspense>
+          }
         />
-        <Route path='/edititem/:id' element={<Editor />} />
-        <Route path='/additem' element={<Creator />} />
-        <Route path='/addcategory' element={<AddCategory />} />
-        <Route path="/checkout" element={<Checkout />}/>
-        <Route path="/contact" element={<Contact />}/>
+        <Route
+          path='/edititem/:id'
+          element={
+            <Suspense fallback={""}>
+              <Editor />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/additem'
+          element={
+            <Suspense fallback={""}>
+              <Creator />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/addcategory'
+          element={
+            <Suspense fallback={""}>
+              <AddCategory />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/checkout'
+          element={
+            <Suspense fallback={""}>
+              <Checkout />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/contact'
+          element={
+            <Suspense fallback={""}>
+              <Contact />
+            </Suspense>
+          }
+        />
       </Routes>
     </>
   );
