@@ -1,7 +1,7 @@
 import Mininav from "../components/mininav";
 import Navbar from "../components/navbar";
 
-export function Contact() {
+function Contact() {
   return (
     <div className='App container-fluid p-0 m-0 min-vh-100 d-flex flex-column'>
       <Navbar categories={null} />
@@ -71,3 +71,5 @@ export function Contact() {
     </div>
   );
 }
+
+export default Contact
