@@ -5,50 +5,18 @@ import CartDetail from "./cartDetail";
 import { useContext, useState } from "react";
 import { CartContext } from "../contexts/cartContext";
 import { ContentContext } from "../contexts/contentContext";
+import "bootstrap/js/dist/collapse"
 
 type Props = {
   categories: Category[] | null;
   hideCart?: boolean
 };
 
-function Navbar({ categories, hideCart }: Props) {
+function Navbar({ hideCart }: Props) {
   hideCart = true
   const { cartList } = useContext(CartContext);
-  const { setFilters, resetAll } = useContext(ContentContext)
+  const { resetAll } = useContext(ContentContext)
   const [cartButton, setCartButton] = useState(true);
-
-  const dropdownList = () => {
-    if (categories) {
-      return (
-        <>
-          <a
-            className='nav-link dropdown-toggle fw-bold active d-sm-none d-block'
-            role='button'
-            data-bs-toggle='dropdown'
-            aria-expanded='false'
-          >
-            Categorias
-          </a>
-          <ul className='dropdown-menu mb-2 bg-white text-black'>
-            {categories.map((category, index) => {
-              return (
-                <li key={index}>
-                  <Link
-                    className='dropdown-item text-black text-center'
-                    to={`/category/${category.name}`}
-                    onClick={() => setFilters({ category: category.name })}
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      );
-    }
-    return <></>;
-  };
 
   return (
     <>
@@ -93,7 +61,6 @@ function Navbar({ categories, hideCart }: Props) {
               >
                 Home
               </Link>
-              {dropdownList()}
               <a
                 className='fw-bold nav-link active'
                 data-bs-toggle='offcanvas'
