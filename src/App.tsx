@@ -11,11 +11,20 @@ const AddCategory = lazy(() => import("./pages/AddCategory"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Products = lazy(() => import("./pages/Products"));
 const Contact = lazy(() => import("./pages/Contact"));
+const AdminPanel = lazy(() => import("./pages/admin/AdminPanel"));
 
 function App() {
   return (
     <>
       <Routes>
+        <Route
+          path='/admin'
+          element={
+            <Suspense fallback={""}>
+              <AdminPanel></AdminPanel>
+            </Suspense>
+          }
+        />
         <Route
           path='/category/:category'
           element={
