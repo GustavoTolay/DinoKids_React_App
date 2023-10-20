@@ -1,4 +1,4 @@
-import { NewProduct } from "../types";
+import { NewProduct, Product } from "../types";
 
 export async function postProduct(
   product: NewProduct,
@@ -35,6 +35,22 @@ export async function deleteProduct(productId: string, token: string) {
       "https://dinokids.site/products/" + productId,
       options
     );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function putProduct(newProduct: Product, token: string) {
+  try {
+    const options: RequestInit = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newProduct),
+    };
+    const response = await fetch("https://dinokids.site/products", options);
     return response;
   } catch (error) {
     console.log(error);
