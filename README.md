@@ -22,7 +22,6 @@ To run the application locally, follow these steps:
 1. Clone this repository.
 2. Run `npm install` to install dependencies.
 3. Start the development server using `npm run dev`.
-4. Access the application at `http://localhost:3000` in your web browser.
 
 ## Folder Structure 📁
 The project structure is organized as follows:
