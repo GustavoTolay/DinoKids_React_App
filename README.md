@@ -23,11 +23,6 @@ To run the application locally, follow these steps:
 2. Run `npm install` to install dependencies.
 3. Start the development server using `npm run dev`.
 
-## Folder Structure 📁
-The project structure is organized as follows:
-- `src/`: Contains source code files.
-- `public/`: Includes public assets and the HTML file.
-
 ## Components and Routing 🧩
 The app structure is based on reusable components and routes for seamless navigation between various pages.
 
