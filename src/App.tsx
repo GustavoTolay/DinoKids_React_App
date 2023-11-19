@@ -1,9 +1,9 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import AdminProducts from "./pages/admin/AdminProducts";
 
 const LogIn = lazy(() => import("./pages/Login"));
-const SignIn = lazy(() => import("./pages/Singin"));
 const Home = lazy(() => import("./pages/Home"));
 const Editor = lazy(() => import("./pages/Editor"));
 const Creator = lazy(() => import("./pages/Creator"));
@@ -17,6 +17,14 @@ function App() {
   return (
     <>
       <Routes>
+        <Route
+          path='/admin/products'
+          element={
+            <Suspense fallback={""}>
+              <AdminProducts></AdminProducts>
+            </Suspense>
+          }
+        />
         <Route
           path='/admin'
           element={
@@ -46,14 +54,6 @@ function App() {
           element={
             <Suspense fallback={""}>
               <LogIn />
-            </Suspense>
-          }
-        />
-        <Route
-          path='/signin'
-          element={
-            <Suspense fallback={""}>
-              <SignIn />
             </Suspense>
           }
         />
