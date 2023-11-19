@@ -5,7 +5,6 @@ import AdminProducts from "./pages/admin/AdminProducts";
 
 const LogIn = lazy(() => import("./pages/Login"));
 const Home = lazy(() => import("./pages/Home"));
-const Editor = lazy(() => import("./pages/Editor"));
 const Creator = lazy(() => import("./pages/Creator"));
 const AddCategory = lazy(() => import("./pages/AddCategory"));
 const Checkout = lazy(() => import("./pages/Checkout"));
@@ -67,14 +66,6 @@ function App() {
           element={
             <Suspense fallback={""}>
               <Products />
-            </Suspense>
-          }
-        />
-        <Route
-          path='/edititem/:id'
-          element={
-            <Suspense fallback={""}>
-              <Editor />
             </Suspense>
           }
         />
