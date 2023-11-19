@@ -63,7 +63,7 @@ function AdminPanel() {
 
           <li className={`list-group-item ${!session && "disabled"}`}>
             {showBadge()}
-            <Link to={"#"}>Administrar Productos</Link>
+            <Link to={"/admin/products"}>Administrar Productos</Link>
           </li>
           <li className={`list-group-item ${!session && "disabled"}`}>
             {showBadge()}
