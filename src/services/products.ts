@@ -1,9 +1,9 @@
-import { NewProduct, Product } from "../types";
+import { EditProduct, NewProduct } from "../types";
 
 export async function postProduct(
   product: NewProduct,
-  image: File,
-  token: string
+  token: string,
+  image?: File
 ) {
   try {
     const formData = new FormData();
@@ -31,17 +31,13 @@ export async function deleteProduct(productId: string, token: string) {
         Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(
-      "https://dinokids.site/products/" + productId,
-      options
-    );
-    return response;
+    return fetch("https://dinokids.site/products/" + productId, options);
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function putProduct(newProduct: Product, token: string) {
+export async function putProduct(newProduct: EditProduct, token: string) {
   try {
     const options: RequestInit = {
       method: "PUT",
@@ -50,8 +46,7 @@ export async function putProduct(newProduct: Product, token: string) {
       },
       body: JSON.stringify(newProduct),
     };
-    const response = await fetch("https://dinokids.site/products", options);
-    return response;
+    return fetch("https://dinokids.site/products", options);
   } catch (error) {
     console.log(error);
   }
