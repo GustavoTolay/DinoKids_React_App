@@ -54,7 +54,7 @@ export type NewCategory = {
   available: boolean;
 };
 
-export type category = NewCategory & {
+export type Category = NewCategory & {
   _id: string;
 };
 
