@@ -5,13 +5,13 @@ import {
   Control,
   UseFormRegister,
 } from "react-hook-form";
-import { Product } from "../types";
+import { NewProduct, Product } from "../types";
 import React, { useState } from "react";
 
 type SizeListProps = {
   modelIndex: number;
-  control: Control<Product, any>;
-  register: UseFormRegister<Product>;
+  control: Control<Product | NewProduct, any>;
+  register: UseFormRegister<Product | NewProduct>;
   hideButtons: boolean;
 };
 
@@ -108,11 +108,11 @@ function SizeList({
   );
 }
 
-type FormProps = {
+type Props = {
   product?: Product;
 };
 
-export default function NewItemForm({ product }: FormProps) {
+export default function NewItemForm({ product }: Props) {
   const showButtons = !product;
   function setDefaultValues() {
     if (product) {
@@ -121,7 +121,7 @@ export default function NewItemForm({ product }: FormProps) {
     }
     return;
   }
-  const { register, handleSubmit, control } = useForm<Product>({
+  const { register, handleSubmit, control } = useForm<Product | NewProduct>({
     defaultValues: setDefaultValues(),
   });
   const { fields, append, remove } = useFieldArray({
@@ -131,13 +131,13 @@ export default function NewItemForm({ product }: FormProps) {
 
   const [image, setImage] = useState<File>();
 
-  const onSubmit: SubmitHandler<Product> = (form) => {
+  const onSubmit: SubmitHandler<Product | NewProduct> = (form) => {
     console.log(form);
     setLoadState("loading");
     const token = window.localStorage.getItem("UserSession");
     function setOptions() {
       if (product) {
-        const { inventory, ...formValues } = form;
+        const { inventory, ...formValues } = form as Product;
         formValues._id = product._id;
         console.log(formValues)
         const options: RequestInit = {
