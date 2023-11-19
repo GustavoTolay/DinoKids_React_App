@@ -12,8 +12,10 @@ export type NewProduct = {
 
 export type Product = NewProduct & {
   _id: string;
-  inventory: Inventory[]
+  inventory: Inventory[];
 };
+
+export type EditProduct = Omit<Product, "inventory">;
 
 export type BasicProduct = Product & {
   inventory: { _id: string }[];
@@ -27,7 +29,7 @@ export type NewInventory = {
 
 export type Inventory = NewInventory & {
   _id: string;
-  sizes: Size[]
+  sizes: Size[];
 };
 
 // Size types
