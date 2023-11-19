@@ -8,7 +8,7 @@ function ShowAlert({ alert }: Props) {
   return (
     <div hidden={alert.state == undefined}>
       <div
-        className={`alert alert-${alert.state?.color} alert-dismissible col-3 mx-auto`}
+        className={`alert alert-${alert.state?.color} alert-dismissible col-3 mx-auto fixed-bottom`}
         role='alert'
       >
         {alert.state?.message}

@@ -1,11 +1,10 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import AdminProducts from "./pages/admin/AdminProducts";
 
 const LogIn = lazy(() => import("./pages/Login"));
-const SignIn = lazy(() => import("./pages/Singin"));
 const Home = lazy(() => import("./pages/Home"));
-const Editor = lazy(() => import("./pages/Editor"));
 const Creator = lazy(() => import("./pages/Creator"));
 const AddCategory = lazy(() => import("./pages/AddCategory"));
 const Checkout = lazy(() => import("./pages/Checkout"));
@@ -17,6 +16,14 @@ function App() {
   return (
     <>
       <Routes>
+        <Route
+          path='/admin/products'
+          element={
+            <Suspense fallback={""}>
+              <AdminProducts></AdminProducts>
+            </Suspense>
+          }
+        />
         <Route
           path='/admin'
           element={
@@ -50,14 +57,6 @@ function App() {
           }
         />
         <Route
-          path='/signin'
-          element={
-            <Suspense fallback={""}>
-              <SignIn />
-            </Suspense>
-          }
-        />
-        <Route
           path='/product/:id'
           errorElement={
             <Suspense fallback={""}>
@@ -67,14 +66,6 @@ function App() {
           element={
             <Suspense fallback={""}>
               <Products />
-            </Suspense>
-          }
-        />
-        <Route
-          path='/edititem/:id'
-          element={
-            <Suspense fallback={""}>
-              <Editor />
             </Suspense>
           }
         />

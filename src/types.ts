@@ -1,5 +1,5 @@
-export type Product = {
-  _id?: string;
+// Product types
+export type NewProduct = {
   name: string;
   description: string;
   image: string;
@@ -7,36 +7,60 @@ export type Product = {
   brand: string;
   available: boolean;
   category: string;
-  inventory: Inventory[]
-}
+  inventory: NewInventory[];
+};
 
-export type Inventory = {
+export type Product = NewProduct & {
+  _id: string;
+  inventory: Inventory[];
+};
+
+export type EditProduct = Omit<Product, "inventory">;
+
+export type BasicProduct = Product & {
+  inventory: { _id: string }[];
+};
+
+// Inventory types
+export type NewInventory = {
   model: string;
-  sizes: Sizes[];
-}
+  sizes: NewSize[];
+};
 
-type Sizes = {
-  _id?: string;
+export type Inventory = NewInventory & {
+  _id: string;
+  sizes: Size[];
+};
+
+// Size types
+export type NewSize = {
   size: string;
   stock: number;
-  weight: number
-}
+  weight: number;
+};
 
-// type category = "category1" | "category2" | "category3" | "category4"
+export type Size = NewSize & {
+  _id: string;
+};
 
+// User type
 export interface User {
-  email: string,
-  password: string,
-  role: string
+  email: string;
+  password: string;
+  role: string;
 }
 
-export type Category = {
-  name: string,
-  available: boolean
-}
+// Category types
+export type NewCategory = {
+  name: string;
+  available: boolean;
+};
+
+export type Category = NewCategory & {
+  _id: string;
+};
 
 // selling info ?
-
 export type Shipment = {
   ship_mode: "shipping" | "withdraw";
   fullname: string;
@@ -51,5 +75,3 @@ export type Shipment = {
   postal_code?: number;
   observations?: string;
 };
-
-  
