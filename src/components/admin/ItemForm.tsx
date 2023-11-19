@@ -7,6 +7,9 @@ import {
 } from "react-hook-form";
 import { NewProduct, Product } from "../../types";
 import React, { useState } from "react";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { postProduct, putProduct } from "../../services/products";
+import { UseAlert } from "../../hooks/useAlert";
 
 type SizeListProps = {
   modelIndex: number;
@@ -109,11 +112,17 @@ function SizeList({
 }
 
 type Props = {
+  alert: UseAlert;
   product?: Product;
+  inCreateMode?: boolean;
 };
 
-export default function NewItemForm({ product }: Props) {
-  const showButtons = !product;
+export default function ItemForm({
+  alert,
+  product,
+  inCreateMode = !product,
+}: Props) {
+  // Set form values if there's a product
   function setDefaultValues() {
     if (product) {
       const { _id, ...formValues } = product;
@@ -121,9 +130,11 @@ export default function NewItemForm({ product }: Props) {
     }
     return;
   }
+
   const { register, handleSubmit, control } = useForm<Product | NewProduct>({
     defaultValues: setDefaultValues(),
   });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "inventory",
@@ -132,48 +143,25 @@ export default function NewItemForm({ product }: Props) {
   const [image, setImage] = useState<File>();
   const [imageURL, setImageURL] = useState("#");
 
-  const onSubmit: SubmitHandler<Product | NewProduct> = (form) => {
-    console.log(form);
-    setLoadState("loading");
-    const token = window.localStorage.getItem("UserSession");
-    function setOptions() {
-      if (product) {
-        const { inventory, ...formValues } = form as Product;
-        formValues._id = product._id;
-        console.log(formValues);
-        const options: RequestInit = {
-          method: "PUT",
-          body: JSON.stringify(formValues),
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        };
-        return options;
-      }
-      const formData = new FormData();
-      formData.append("image", image as Blob);
-      formData.append("product", JSON.stringify(form));
-      const options: RequestInit = {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      return options;
-    }
-    fetch("https://dinokids.site/products", setOptions())
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        setLoadState("loaded");
-      });
-  };
+  const token = useLocalStorage("UserSession");
 
-  const [loadState, setLoadState] = useState<"standby" | "loading" | "loaded">(
-    "standby"
-  );
+  const onSubmit: SubmitHandler<Product | NewProduct> = (form) => {
+    function sendRequest() {
+      if (inCreateMode) {
+        return postProduct(form, token.get() as string, image);
+      } else {
+        let { inventory, ...newProduct } = form as Product;
+        newProduct._id = product?._id as string;
+        return putProduct(newProduct, token.get() as string);
+      }
+    }
+
+    sendRequest().then((res) => {
+      if (res?.status == 200)
+        return alert.set({ color: "primary", message: "Operación exitosa" });
+      return alert.set({ color: "danger", message: "Error en la petición" });
+    });
+  };
 
   function modelsList() {
     const list = fields.map((field, index) => {
@@ -191,14 +179,14 @@ export default function NewItemForm({ product }: Props) {
             modelIndex={index}
             control={control}
             register={register}
-            hideButtons={!showButtons}
+            hideButtons={!inCreateMode}
           />
           <div className='text-center mt-2'>
             <button
               type='button'
               className='btn btn-dark btn-sm'
               onClick={() => remove(index)}
-              hidden={!showButtons}
+              hidden={!inCreateMode}
             >
               Eliminar Modelo
             </button>
@@ -269,7 +257,7 @@ export default function NewItemForm({ product }: Props) {
 
         {/* Set models and sizes section */}
         <section className='col-4 text-start px-5'>
-          <fieldset disabled={!showButtons}>{modelsList()}</fieldset>
+          <fieldset disabled={!inCreateMode}>{modelsList()}</fieldset>
           <div className='text-center mt-2'>
             <button
               type='button'
@@ -280,16 +268,16 @@ export default function NewItemForm({ product }: Props) {
                   sizes: [],
                 })
               }
-              hidden={!showButtons}
+              hidden={!inCreateMode}
             >
               Agregar Modelo.
             </button>
           </div>
         </section>
 
-        {/* Image and feedback section */}
+        {/* Image upload and preview section */}
         <section className='col-4 px-5'>
-          <div className='row' hidden={!showButtons}>
+          <div className='row' hidden={!inCreateMode}>
             <h5>Agregar Imagen</h5>
             <p>Proporción 1:1.</p>
             <img src={imageURL} alt='Image preview' />
@@ -306,27 +294,9 @@ export default function NewItemForm({ product }: Props) {
                 }}
               />
             </div>
-            <hr />
-          </div>
-          <div className='row'>
-            <h5>Feedback</h5>
-            <div
-              className='spinner-border text-primary mx-auto mt-2'
-              role='status'
-              hidden={loadState != "loading"}
-            >
-              <span className='visually-hidden'>Loading...</span>
-            </div>
-            <h4 className='text-primary mt-2' hidden={loadState != "loaded"}>
-              Hecho!, espero
-            </h4>
-            <h4 className='text-primary mt-2' hidden={loadState != "standby"}>
-              Esperando...
-            </h4>
           </div>
         </section>
       </form>
-      <div className='col-6'></div>
     </>
   );
 }

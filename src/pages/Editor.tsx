@@ -3,7 +3,7 @@ import Navbar from "../components/navbar";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../types";
-import NewItemForm from "../components/newItemForm";
+import NewItemForm from "../components/admin/ItemForm";
 
 const Editor = () => {
   const { id } = useParams();
