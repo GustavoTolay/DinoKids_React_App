@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function ProductsList({ products, alert }: Props) {
-
   const token = useLocalStorage("UserSession");
 
   const handleDelete = (product: Product) => {
@@ -29,9 +28,12 @@ export default function ProductsList({ products, alert }: Props) {
           <h5 className='card-title fw-light m-0'>Acciones:</h5>
           <hr className='mt-0' />
           <div className='card-text'>
-            <button className='btn btn-primary btn-sm mb-2'>
-              &#x2795; Agregar Producto
-            </button>
+            <Link to='/additem'>
+              <button className='btn btn-primary btn-sm mb-2'>
+                &#x2795; Agregar Producto
+              </button>
+            </Link>
+
             <button className='btn btn-primary btn-sm mb-2'>
               &#x2795; Agregar Categoria
             </button>
@@ -69,7 +71,9 @@ export default function ProductsList({ products, alert }: Props) {
             </div>
             <div className='card-footer pb-0'>
               <div className='d-flex justify-content-between'>
-                <Link to={"#"}><button className='btn btn-primary'>&#9997;</button></Link>
+                <Link to={"/additem"} state={{ product: product }}>
+                  <button className='btn btn-primary'>&#9997;</button>
+                </Link>
                 <button
                   className='btn btn-danger'
                   onClick={() => handleDelete(product)}
